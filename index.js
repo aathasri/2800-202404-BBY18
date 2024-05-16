@@ -174,7 +174,7 @@ app.post('/submitUser', async (req,res) => {
 
     req.session.authenticated = true;
     req.session.username = result.username;
-    //Tanner created req.session.userId = result.insertedId; with chatgpt
+    //Tanner created req.session.userId = result.insertedId; with chatgpt: chat.openai.com
     req.session.userId = result.insertedId;
     req.session.cookiemaxAge = expireTime;
 
@@ -248,7 +248,7 @@ app.get('/map', (req, res) => {
 });
 
 // Tanner Added userProfileInfo and userInformation
-// Used chatgpt to help include any previously user submited data.
+// Used chatgpt to help include any previously user submited data. Chatgpt: chat.openai.com
 app.get('/userProfileInfo', async (req, res) => {
     try {
         const userId = req.session.userId;
@@ -260,7 +260,7 @@ app.get('/userProfileInfo', async (req, res) => {
     }
 });
 
-// Used ChatGpt to help accept form submission and editing
+// Used ChatGpt to help accept form submission and editing. Chatgpt: chat.openai.com
 app.post('/userInformation', async (req, res) => {
     try {
         const { firstName, lastName, email, address, city, province, postalCode, phone, DOB, age, gender, careCard, doctor, medHistory, medication, allergies } = req.body;
