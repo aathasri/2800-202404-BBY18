@@ -31,6 +31,9 @@ const userCollection = database.db(mongodb_database).collection('users');
 app.set('view engine', 'ejs');
 
 app.use(express.urlencoded({extended: false}));
+app.use(express.static(__dirname + "/images"));
+app.use(express.static(__dirname + "/views"));
+
 
 var mongoStore = MongoStore.create({
 	mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
@@ -166,11 +169,11 @@ app.post('/submitUser', async (req,res) => {
 
     var hashedPassword = await bcrypt.hash(password, saltRounds);
 	
-	await userCollection.insertOne({email: email, username: username, password: hashedPassword, user_type: "user"});
+	var result = await userCollection.insertOne({email: email, username: username, password: hashedPassword, user_type: "user"});
 	console.log("Inserted user");
 
     req.session.authenticated = true;
-    req.session.username = username;
+    req.session.username = result.username;
     //Tanner created req.session.userId = result.insertedId; with chatgpt
     req.session.userId = result.insertedId;
     req.session.cookiemaxAge = expireTime;
@@ -238,6 +241,10 @@ app.post('/loggingin', async (req, res) => {
 
 app.get('/', (req, res) => {
     res.render('test');
+});
+
+app.get('/map', (req, res) => {
+    res.render('map');
 });
 
 // Tanner Added userProfileInfo and userInformation
