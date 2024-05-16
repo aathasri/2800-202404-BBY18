@@ -1,0 +1,6 @@
+<h1>Password Reset</h1>
+<form action="/reset/<%= token %>" method="post">
+    <label for="password">New Password:</label>
+    <input type="password" id="password" name="password" required>
+    <button type="submit">Reset Password</button>
+</form>

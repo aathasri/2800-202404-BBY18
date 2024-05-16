@@ -9,6 +9,8 @@ const bcrypt = require('bcrypt');
 const saltRounds = 12;
 const path = require('path');
 const Joi = require("joi");
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 
 const expireTime =  1 * 60 * 60 * 1000; 
 
@@ -45,16 +47,103 @@ app.use(session({
 }
 ));
 
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD
+    }
+});
+
 app.get('/login', (req,res) => {
     var errorMessage = req.session.errorMessage || '';
     req.session.errorMessage = '';
     res.render("login", {errorMessage: errorMessage});
 });
 
+app.post('/forgotPassword', async (req, res) => {
+    const { email } = req.body;
+    const user = await userCollection.findOne({ email });
+    if (!user) {
+        req.session.errorMessage = 'User with this email does not exist';
+        res.redirect('/login');
+        return;
+    }
+
+    // Generate a unique token for password reset
+    const token = crypto.randomBytes(20).toString('hex');
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = Date.now() + 3600000; // Token expires in 1 hour
+
+    await userCollection.updateOne({ email }, { $set: { resetPasswordToken: token, resetPasswordExpires: user.resetPasswordExpires } });
+
+    // Send the reset link to user's email
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: 'Password Reset',
+        text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n`
+            + `Please click on the following link, or paste this into your browser to complete the process:\n\n`
+            + `http://${req.headers.host}/reset/${token}\n\n`
+            + `If you did not request this, please ignore this email and your password will remain unchanged.\n`
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+
+    req.session.successMessage = 'Password reset link has been sent to your email';
+    res.redirect('/login');
+});
+
+// Route for rendering password reset form
+app.get('/reset/:token', async (req, res) => {
+    const user = await userCollection.findOne({
+        resetPasswordToken: req.params.token,
+        resetPasswordExpires: { $gt: Date.now() }
+    });
+    if (!user) {
+        req.session.errorMessage = 'Password reset token is invalid or has expired';
+        res.redirect('/login');
+        return;
+    }
+    res.render('reset', { token: req.params.token });
+});
+
+// Route for processing password reset
+app.post('/reset/:token', async (req, res) => {
+    const user = await userCollection.findOne({
+        resetPasswordToken: req.params.token,
+        resetPasswordExpires: { $gt: Date.now() }
+    });
+    if (!user) {
+        req.session.errorMessage = 'Password reset token is invalid or has expired';
+        res.redirect('/login');
+        return;
+    }
+
+    const { password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    await userCollection.updateOne({ email: user.email }, { $set: { password: hashedPassword, resetPasswordToken: null, resetPasswordExpires: null } });
+
+    req.session.successMessage = 'Password has been reset successfully';
+    res.redirect('/login');
+});
+
+app.get('/forgotPassword', (req,res) => {
+    res.render("forgotPassword");
+});
+
 app.get('/createUser', (req,res) => {
 	res.render("createUser");
    });
 
+   
 
 app.post('/submitUser', async (req,res) => {
     var email = req.body.email;
@@ -144,8 +233,21 @@ app.post('/loggingin', async (req, res) => {
 // ));
 
 app.get('/', (req, res) => {
-    res.send('Hello, World!');
+    res.render('test');
 });
+
+
+app.post('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('Error destroying session:', err);
+            res.status(500).send('Internal Server Error');
+            return;
+        }
+        res.redirect('/login');
+    });
+});
+
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}/`);

@@ -11,12 +11,15 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "connect-mongo": "^5.1.0",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
     "express-session": "^1.18.0",
+    "fs": "^0.0.1-security",
     "joi": "^17.13.1",
     "mongodb": "^6.6.2",
+    "nodemailer": "^6.9.13",
     "path": "^0.12.7"
   },
   "devDependencies": {
