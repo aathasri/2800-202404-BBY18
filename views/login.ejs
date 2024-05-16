@@ -1,3 +1,6 @@
+<%- include("templates/header") %> 
+<br>
+<br>
 <h1>Please login</h1>
 <form action='/loggingin' method='post'>
 <input name='email' type='text' placeholder='email'>
@@ -6,3 +9,4 @@
 </form>
 <%= errorMessage %>
 <a href="/forgotPassword">Forgot Password</a>
+<%- include("templates/footer") %> 
