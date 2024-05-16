@@ -5,18 +5,19 @@
     <form action="/userInformation" method="post">
 
         <!-- User's First Name, Last Name, and Email -->
+        <!-- Had chatgpt help with the ejs for the conditionals in the values -->
         <div class="row">
             <div class="col-md-4">
                 <label for="userFirstName" class="form-label">First Name</label>
-                <input name="firstName" type="text" class="form-control" id="userFirstName">
+                <input name="firstName" type="text" class="form-control" id="userFirstName" value="<%= user && user.firstName || '' %>">
             </div>
             <div class="col-md-4">
                 <label for="userLastName" class="form-label">Last Name</label>
-                <input name="lastName" type="text" class="form-control" id="userLastName">
+                <input name="lastName" type="text" class="form-control" id="userLastName" value="<%= user && user.lastName || '' %>">
             </div>
             <div class="col-md-4">
                 <label for="userEmail" class="form-label">Email Address</label>
-                <input name="email" type="email" class="form-control" id="userEmail">
+                <input name="email" type="email" class="form-control" id="userEmail" value="<%= user && user.email || '' %>">
             </div>
         </div>
 
@@ -24,7 +25,7 @@
         <div class="row">
             <div class="col-md-12">
                 <label for="userAddress" class="form-label">Mailing Address</label>
-                <input name="address" type="text" class="form-control" id="userAddress">
+                <input name="address" type="text" class="form-control" id="userAddress" value="<%= user && user.address || '' %>">
             </div>
         </div>
 
@@ -32,15 +33,15 @@
         <div class="row">
             <div class="col-md-4">
                 <label for="userCity" class="form-label">City</label>
-                <input name="City" type="text" class="form-control" id="userCity">
+                <input name="city" type="text" class="form-control" id="userCity" value="<%= user && user.city || '' %>">
             </div>
             <div class="col-md-4">
                 <label for="userProvince" class="form-label">Province</label>
-                <input name="province" type="text" class="form-control" id="userProvince">
+                <input name="province" type="text" class="form-control" id="userProvince" value="<%= user && user.province || '' %>">
             </div>
             <div class="col-md-4">
                 <label for="userPostalCode" class="form-label">Postal Code</label>
-                <input name="postalCode" type="text" class="form-control" id="userPostalCode">
+                <input name="postalCode" type="text" class="form-control" id="userPostalCode" value="<%= user && user.postalCode || '' %>">
             </div>
         </div>
 
@@ -49,15 +50,15 @@
             <div class="col-md-4">
                 <label for="userPhone" class="form-label">Phone Number</label>
                 <input name="phone" type="tel" class="form-control" id="userPhone" pattern="[0-9]{3}-[0-9{3}-[0-9]{4}"
-                    placeholder="123-456-7890">
+                    placeholder="123-456-7890" value="<%= user && user.phone || '' %>">
             </div>
             <div class="col-md-4">
                 <label for="userDOB" class="form-label">Date of Birth</label>
-                <input name="DOB" type="date" class="form-control" id="userDOB">
+                <input name="DOB" type="date" class="form-control" id="userDOB" value="<%= user && user.DOB || '' %>">
             </div>
             <div class="col-md-4">
                 <label for="userAge" class="form-label">Age</label>
-                <input name="age" type="number" class="form-control" id="userAge" min="1" max="120">
+                <input name="age" type="number" class="form-control" id="userAge" min="1" max="120" value="<%= user && user.age || '' %>">
             </div>
         </div>
 
@@ -65,16 +66,16 @@
         <div class="row">
             <div class="col-md-4">
                 <label for="userGender" class="form-label">Gender</label>
-                <select class="form-select form-select-md col-mb-3" id="userGender">
+                <select name="gender" class="form-select form-select-md col-mb-3" id="userGender" >
                     <option selected>Gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
+                    <option value="male" <%= user && user.gender === 'male' ? 'selected' : '' %>>Male</option>
+                    <option value="female" <%= user && user.gender === 'female' ? 'selected' : '' %>>Female</option>
+                    <option value="other" <%= user && user.gender === 'other' ? 'selected' : '' %>>Other</option>
                 </select>
             </div>
             <div class="col-md-8">
                 <label for="userCareCard" class="form-label">Care Card Number</label>
-                <input name="careCard" type="text" class="form-control" id="userCareCard" pattern="[0-9]{10}">
+                <input name="careCard" type="text" class="form-control" id="userCareCard" pattern="[0-9]{10}" value="<%= user && user.careCard || '' %>">
             </div>
         </div>
 
@@ -82,7 +83,7 @@
         <div class="row">
             <div class="col-md-12">
                 <label for="userDoctor" class="form-label">Family Doctor</label>
-                <input name="doctor" type="text" class="form-control" id="userDoctor">
+                <input name="doctor" type="text" class="form-control" id="userDoctor" value="<%= user && user.doctor || '' %>">
             </div>
         </div>
 
@@ -90,7 +91,7 @@
         <div class="row">
             <div class="col-md-12">
                 <label for="userMedHistory" class="form-label">Past Medical History</label>
-                <textarea name="medHistory" type="text" class="form-control" id="userMedHistory" rows="3"></textarea>
+                <textarea name="medHistory" type="text" class="form-control" id="userMedHistory" rows="3" value="<%= user && user.medHistory || '' %>"></textarea>
             </div>
         </div>
 
@@ -99,7 +100,7 @@
             <div class="col-md-12">
                 <label for="userMedication" class="form-label">Medications</label>
                 <textarea name="medication" type="text" class="form-control" id="userMedication"
-                    placeholder="Medication Name: Dosage, #Times a day" rows="3"></textarea>
+                    placeholder="Medication Name: Dosage, #Times a day" rows="3" value="<%= user && user.medication || '' %>"></textarea>
             </div>
         </div>
 
@@ -109,7 +110,7 @@
                 <label for="userAllergies" class="form-label">Allergies</label>
                 <textarea name="allergies" type="text" class="form-control" id="userAllergies"
                     placeholder="Allergy: Severity, Hospitalized or Intubated for this allergy previously?"
-                    rows="3"></textarea>
+                    rows="3" value="<%= user && user.allergies || '' %>"></textarea>
             </div>
         </div>
 

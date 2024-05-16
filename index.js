@@ -171,6 +171,8 @@ app.post('/submitUser', async (req,res) => {
 
     req.session.authenticated = true;
     req.session.username = username;
+    //Tanner created req.session.userId = result.insertedId; with chatgpt
+    req.session.userId = result.insertedId;
     req.session.cookiemaxAge = expireTime;
 
     res.render("submitUser");
@@ -215,6 +217,8 @@ app.post('/loggingin', async (req, res) => {
     if (await bcrypt.compare(password, result[0].password)) {
         console.log("correct password");
         req.session.authenticated = true;
+        req.session.username = username;
+        req.session.userId = result[0]._id;
         req.session.user_type = result[0].user_type;
         req.session.cookie.maxAge = expireTime;
 
@@ -236,12 +240,36 @@ app.get('/', (req, res) => {
     res.render('test');
 });
 
-app.get('/userProfileInfo', (req, res) => {
-    res.render('userProfileInformation');
+// Tanner Added userProfileInfo and userInformation
+// Used chatgpt to help include any previously user submited data.
+app.get('/userProfileInfo', async (req, res) => {
+    try {
+        const userId = req.session.userId;
+        const user = await userCollection.findOne({ _id: userId });
+        res.render('userProfileInformation', { user });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
-app.post('/userInformation', (req, res) => {
-    
+// Used ChatGpt to help accept form submission and editing
+app.post('/userInformation', async (req, res) => {
+    try {
+        const { firstName, lastName, email, address, city, province, postalCode, phone, DOB, age, gender, careCard, doctor, medHistory, medication, allergies } = req.body;
+
+        const userId = req.session.userId;
+        await userCollection.updateOne(
+            { _id: userId },
+            { $set: { firstName, lastName, email, address, city, province, postalCode, phone, DOB, age, gender, careCard, doctor, medHistory, medication, allergies }
+        });
+
+        // Redirect the user to a success page or back to the profile page
+        res.redirect('/userProfileInformation');
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Internal Server Error');
+    }
 })
 
 app.post('/logout', (req, res) => {
