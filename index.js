@@ -236,6 +236,13 @@ app.get('/', (req, res) => {
     res.render('test');
 });
 
+app.get('/userProfileInfo', (req, res) => {
+    res.render('userProfileInformation');
+});
+
+app.post('/userInformation', (req, res) => {
+    
+})
 
 app.post('/logout', (req, res) => {
     req.session.destroy((err) => {
