@@ -1,12 +1,31 @@
-<%- include("templates/header") %> 
-<br>
-<br>
-<h1>Please login</h1>
+<!-- <h1>Please login</h1>
 <form action='/loggingin' method='post'>
 <input name='email' type='text' placeholder='email'>
 <input name='password' type='password' placeholder='password'>
 <button>Submit</button>
 </form>
 <%= errorMessage %>
-<a href="/forgotPassword">Forgot Password</a>
-<%- include("templates/footer") %> 
+<a href="/forgotPassword">Forgot Password</a> -->
+<%- include('templates/header') %>
+<br>
+    <div class="container mt-5">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <h1 class="mb-4">Login</h1>
+          <form action="/loggingin" method="post">
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email">
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password">
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <a href="/forgotPassword" class="ml-2">Forgot Password</a>
+          </form>
+        </div>
+      </div>
+    </div>  
+<%- include('templates/footer') %>
