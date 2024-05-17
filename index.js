@@ -248,7 +248,7 @@ app.get('/loggedin', (req,res) => {
 // const path = require('path');
 // ));
 
-app.get('/main', (req, res) => {
+app.get('/', (req, res) => {
     res.render('landing');
 });
 
