@@ -213,25 +213,30 @@ app.post('/loggingin', async (req, res) => {
 
     if (!result) {
         req.session.errorMessage = 'Invalid email or password';
-        res.redirect("/");
+        res.redirect("/login");
         return;
     }
 
     if (await bcrypt.compare(password, result[0].password)) {
         console.log("correct password");
         req.session.authenticated = true;
-        req.session.username = username;
+        req.session.username = result[0].username;
         req.session.userId = result[0]._id;
         req.session.user_type = result[0].user_type;
         req.session.cookie.maxAge = expireTime;
 
-        res.redirect('/home');
+        res.redirect('/main');
     } else {
         req.session.errorMessage = 'Invalid email or password';
         res.redirect("/login");
     }
 });
-
+app.get('/loggedin', (req,res) => {
+    if (!req.session.authenticated) {
+        res.redirect('/login');
+    }
+    res.render('test');
+});
 // Could be useful in the future
 // require('dotenv').config();
 // const session = require('express-session');
@@ -239,7 +244,7 @@ app.post('/loggingin', async (req, res) => {
 // const path = require('path');
 // ));
 
-app.get('/', (req, res) => {
+app.get('/main', (req, res) => {
     res.render('test');
 });
 
