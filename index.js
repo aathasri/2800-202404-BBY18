@@ -229,7 +229,7 @@ app.post('/loggingin', async (req, res) => {
         req.session.user_type = result[0].user_type;
         req.session.cookie.maxAge = expireTime;
 
-        res.redirect('/main');
+        res.redirect('/userProfileInfo');
     } else {
         req.session.errorMessage = 'Invalid email or password';
         res.redirect("/login");
@@ -288,7 +288,7 @@ app.post('/userInformation', async (req, res) => {
     }
 })
 
-app.post('/logout', (req, res) => {
+app.get('/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) {
             console.error('Error destroying session:', err);
