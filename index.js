@@ -182,7 +182,7 @@ app.post('/submitUser', async (req,res) => {
     req.session.userId = result.insertedId;
     req.session.cookiemaxAge = expireTime;
 
-    res.render("submitUser");
+    res.redirect("/userProfileInfo");
 
 });
 
@@ -248,8 +248,8 @@ app.get('/loggedin', (req,res) => {
 // const path = require('path');
 // ));
 
-app.get('/', (req, res) => {
-    res.render('landing.ejs');
+app.get('/main', (req, res) => {
+    res.render('landing');
 });
 
 app.get('/map', (req, res) => {
