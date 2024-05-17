@@ -1,6 +1,25 @@
-<h1>Password Reset</h1>
-<form action="/reset/<%= token %>" method="post">
-    <label for="password">New Password:</label>
-    <input type="password" id="password" name="password" required>
-    <button type="submit">Reset Password</button>
-</form>
+<%- include('templates/header') %>
+<br>
+<br>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="card-title text-center">Password Reset</h1>
+                    <form action="/reset/<%= token %>" method="post">
+                        <div class="form-group">
+                            <label for="password">New Password:</label>
+                            <input type="password" id="password" name="password" class="form-control" required>
+                        </div>
+                        <br>
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn btn-primary">Reset Password</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include('templates/footer') %>

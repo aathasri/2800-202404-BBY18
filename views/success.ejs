@@ -1,4 +1,17 @@
-<h1>Password Reset Success</h1>
-<p>Your password has been reset successfully.</p>
-<p>You can now <a href="/login">login</a> with your new password.</p>
+<%- include('templates/header') %>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h1 class="card-title">Password Reset Success</h1>
+                        <p class="card-text">Your password has been reset successfully.</p>
+                        <p class="card-text">You can now <a href="/login" class="btn btn-primary">login</a> with your new password.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<%- include('templates/footer') %>
 
