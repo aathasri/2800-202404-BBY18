@@ -261,7 +261,7 @@ app.get('/map', (req, res) => {
 app.get('/userProfileInfo', async (req, res) => {
     try {
         const userId = req.session.userId;
-        const user = await userCollection.findOne({ _id: userId });
+        const user = await userCollection.findOne({ _id: new ObjectId(userId)});
         res.render('userProfileInformation', { user });
     } catch (error) {
         console.error('Error:', error);
@@ -276,7 +276,7 @@ app.post('/userInformation', async (req, res) => {
 
         const userId = req.session.userId;
         await userCollection.updateOne(
-            { _id: ObjectId(userId) },
+            { _id:  new ObjectId(userId) },
             { $set: { firstName, lastName, email, address, city, province, postalCode, phone, DOB, age, gender, careCard, doctor, medHistory, medication, allergies }
         });
 
