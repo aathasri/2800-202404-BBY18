@@ -56,31 +56,37 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <!-- Offcanvas menu -->
-            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+             <!-- Offcanvas menu -->
+             <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
                 <!-- Offcanvas content -->
                 <div class="offcanvas-body">
                     <!-- Navbar links -->
                     <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                         <!-- Navbar items -->
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="/userProfileInfo">Home</a>
+                            <a class="nav-link active" aria-current="page" href="/createUser">Create User</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/login">Logout</a>
+                            <a class="nav-link" href="/logout">Logout</a>
                         </li>
-                        <li class="nav-item dropdown">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/userProfileInfo">Profile</a>
+                        </li>
+                        <!-- <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Profile
                             </a>
-                            <!-- Dropdown menu -->
+                             Dropdown menu
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="/userInformation">View Profile</a></li>
                                 <li><a class="dropdown-item" href="#">Edit Profile</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="/reset">Reset Password</a></li>
                             </ul>
-                        </li>
+                        </li> -->
                     </ul>
                 </div>
             </div>
