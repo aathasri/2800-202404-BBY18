@@ -46,7 +46,8 @@ app.use(session({
     secret: node_session_secret,
 	store: mongoStore, 
 	saveUninitialized: false, 
-	resave: true
+	resave: true,
+    cookie: {maxAge: expireTime }
 }
 ));
 
@@ -277,7 +278,7 @@ app.post('/userInformation', async (req, res) => {
         });
 
         // Redirect the user to a success page or back to the profile page
-        res.redirect('/userProfileInformation');
+        res.redirect('/userProfileInfo');
     } catch (error) {
         console.error('Error:', error);
         res.status(500).send('Internal Server Error');
