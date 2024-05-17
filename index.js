@@ -28,11 +28,13 @@ var {database} = require('./databaseConnection');
 
 const userCollection = database.db(mongodb_database).collection('users');
 
-app.set('view engine', 'ejs');
+
 
 app.use(express.urlencoded({extended: false}));
 app.use(express.static(__dirname + "/images"));
 app.use(express.static(__dirname + "/views"));
+
+app.set('view engine', 'ejs');
 
 
 var mongoStore = MongoStore.create({
@@ -240,7 +242,7 @@ app.post('/loggingin', async (req, res) => {
 // ));
 
 app.get('/', (req, res) => {
-    res.render('test');
+    res.render('landing.ejs');
 });
 
 app.get('/map', (req, res) => {
