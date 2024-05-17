@@ -93,7 +93,7 @@
         <div class="row">
             <div class="col-md-12">
                 <label for="userMedHistory" class="form-label">Past Medical History</label>
-                <textarea name="medHistory" type="text" class="form-control" id="userMedHistory" rows="3" value="<%= user && user.medHistory || '' %>"></textarea>
+                <textarea name="medHistory" type="text" class="form-control" id="userMedHistory" rows="3"><%= user && user.medHistory || '' %></textarea>
             </div>
         </div>
 
@@ -102,7 +102,7 @@
             <div class="col-md-12">
                 <label for="userMedication" class="form-label">Medications</label>
                 <textarea name="medication" type="text" class="form-control" id="userMedication"
-                    placeholder="Medication Name: Dosage, #Times a day" rows="3" value="<%= user && user.medication || '' %>"></textarea>
+                    placeholder="Medication Name: Dosage, #Times a day" rows="3"><%= user && user.medication || '' %></textarea>
             </div>
         </div>
 
@@ -112,7 +112,7 @@
                 <label for="userAllergies" class="form-label">Allergies</label>
                 <textarea name="allergies" type="text" class="form-control" id="userAllergies"
                     placeholder="Allergy: Severity, Hospitalized or Intubated for this allergy previously?"
-                    rows="3" value="<%= user && user.allergies || '' %>"></textarea>
+                    rows="3"><%= user && user.allergies || '' %></textarea>
             </div>
         </div>
 

@@ -11,6 +11,7 @@ const path = require('path');
 const Joi = require("joi");
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+const { ObjectId } = require('mongodb'); // Added by Tanner from Chatgpt: chat.openai.com to save user information from form and repopulate the form with previously entered values.
 
 const expireTime =  1 * 60 * 60 * 1000; 
 
@@ -275,7 +276,7 @@ app.post('/userInformation', async (req, res) => {
 
         const userId = req.session.userId;
         await userCollection.updateOne(
-            { _id: userId },
+            { _id: ObjectId(userId) },
             { $set: { firstName, lastName, email, address, city, province, postalCode, phone, DOB, age, gender, careCard, doctor, medHistory, medication, allergies }
         });
 
