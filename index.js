@@ -182,7 +182,7 @@ app.post('/submitUser', async (req,res) => {
     req.session.userId = result.insertedId;
     req.session.cookiemaxAge = expireTime;
 
-    res.render("submitUser");
+    res.redirect("/userProfileInfo");
 
 });
 
@@ -229,7 +229,7 @@ app.post('/loggingin', async (req, res) => {
         req.session.user_type = result[0].user_type;
         req.session.cookie.maxAge = expireTime;
 
-        res.redirect('/main');
+        res.redirect('/userProfileInfo');
     } else {
         req.session.errorMessage = 'Invalid email or password';
         res.redirect("/login");
@@ -249,7 +249,7 @@ app.get('/loggedin', (req,res) => {
 // ));
 
 app.get('/', (req, res) => {
-    res.render('landing.ejs');
+    res.render('landing');
 });
 
 app.get('/map', (req, res) => {
@@ -261,7 +261,7 @@ app.get('/map', (req, res) => {
 app.get('/userProfileInfo', async (req, res) => {
     try {
         const userId = req.session.userId;
-        const user = await userCollection.findOne({ _id: userId });
+        const user = await userCollection.findOne({ _id: new ObjectId(userId)});
         res.render('userProfileInformation', { user });
     } catch (error) {
         console.error('Error:', error);
@@ -276,7 +276,7 @@ app.post('/userInformation', async (req, res) => {
 
         const userId = req.session.userId;
         await userCollection.updateOne(
-            { _id: ObjectId(userId) },
+            { _id:  new ObjectId(userId) },
             { $set: { firstName, lastName, email, address, city, province, postalCode, phone, DOB, age, gender, careCard, doctor, medHistory, medication, allergies }
         });
 
@@ -288,7 +288,7 @@ app.post('/userInformation', async (req, res) => {
     }
 })
 
-app.post('/logout', (req, res) => {
+app.get('/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) {
             console.error('Error destroying session:', err);
