@@ -18,6 +18,12 @@ Used chatgpt: chat.openai.com
 3. File: userProfileInformation, Line(s): 
 Used chatgpt: chat.openai.com
 - Generated the conditional statements in the value for each field to populate with previously entered information.
+- Generated the enable form function to control the profile form with the edit button. 
+
+4. File: orgProfile.ejs
+Used chatgpt: chat.openai.com
+- Created the orgProfile using the userProfileInformation.ejs as a template. Everything generated for userProfileInfo was
+used in the orgProfile and altered to fit for organizations.
 
 
 Mitchell MacDonald:
