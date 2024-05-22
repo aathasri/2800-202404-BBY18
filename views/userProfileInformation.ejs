@@ -5,7 +5,7 @@
 </div>
 
 <div>
-    <form action="/userInformation" method="post">
+    <form id="userInfo" action="/userInformation" method="post">
 
         <!-- User's First Name, Last Name, and Email -->
         <!-- Had chatgpt help with the ejs for the conditionals in the values -->
@@ -119,7 +119,7 @@
 
         <div class="col-md-3 mx-auto mt-3">
             <button type="button" class="btn btn-secondary" id="editButton" onclick="enableForm()">Edit</button>
-            <button type="submit" class="btn btn-primary" id="saveButton">Save</button>
+            <button type="submit" class="btn btn-primary" id="saveButton" disabled>Save</button>
         </div>
 </form>
 </div>
@@ -127,7 +127,7 @@
 <!-- Used chatgpt (chat.openai.com) to generate the enable form function to control the profile form with the edit button.  -->
 <script>
     function enableForm() {
-        const form = document.getElementById('userInfoForm');
+        const form = document.getElementById('userInfo');
         const inputs = form.querySelectorAll('input, select, textarea');
         inputs.forEach(input => input.disabled = false);
         document.getElementById('saveButton').disabled = false;

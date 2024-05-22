@@ -7,7 +7,7 @@
 </div>
 
 <div>
-    <form action="/orgInfo" method="post">
+    <form id="orgInfo" action="/orgInfo" method="post">
 
         <!-- Organization Name, Jurisdiction, and Email Address -->
         <div class="row">
@@ -73,15 +73,15 @@
 
         <div class="col-md-3 mx-auto mt-3">
             <button type="button" class="btn btn-secondary" id="editButton" onclick="enableForm()">Edit</button>
-            <button type="submit" class="btn btn-primary" id="saveButton">Save</button>
+            <button type="submit" class="btn btn-primary" id="saveButton" disabled>Save</button>
         </div>
 </form>
 </div>
 
 <script>
     function enableForm() {
-        const form = document.getElementById('userInfoForm');
-        const inputs = form.querySelectorAll('input, select, textarea');
+        const form = document.getElementById('orgInfo');
+        const inputs = form.querySelectorAll('input, textarea');
         inputs.forEach(input => input.disabled = false);
         document.getElementById('saveButton').disabled = false;
     }
