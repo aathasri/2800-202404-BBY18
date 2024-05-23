@@ -14,17 +14,13 @@
 <div class="container mt-5">
     <br>
     <br>
-    <h1 class="mb-4">Create User Here</h1>
-    <div>Google Sign-in Here<div class="g-signin2 mx-auto" id="signin-button" data-onsuccess="signinCallback"></div></div>
-    <br>
-    <br>
-    <br>
-    <form action='/submitUser' method='post' class="needs-validation" novalidate>
+    <h1 class="mb-4">Enter Organization Here</h1>
+    <form action='/submitOrg' method='post' class="needs-validation" novalidate>
         <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input name='username' type='text' class="form-control" id="username" placeholder='Username' required>
+            <label for="username" class="form-label">Organization Name:</label>
+            <input name='username' type='text' class="form-control" id="username" placeholder='Name' required>
             <div class="invalid-feedback">
-                Please enter a username.
+                Please enter a name.
             </div>
         </div>
         <div class="mb-3">

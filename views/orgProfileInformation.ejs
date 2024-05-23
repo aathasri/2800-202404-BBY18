@@ -1,0 +1,136 @@
+<%- include("templates/header") %> 
+
+<div class="px-4 py-4 my-5 text-center">
+    <h1 class="display-5 fw-bold text-body-emphasis"> Organization Profile</h1>
+</div>
+
+<div>
+    <form action="/userInformation" method="post">
+
+        <!-- User's First Name, Last Name, and Email -->
+        <!-- Had chatgpt help with the ejs for the conditionals in the values -->
+        <div class="row">
+            <div class="col-md-4">
+                <label for="userFirstName" class="form-label">First Name</label>
+                <input name="firstName" type="text" class="form-control" id="userFirstName" value="<%= user && user.firstName || '' %>" disabled>
+            </div>
+            <div class="col-md-4">
+                <label for="userLastName" class="form-label">Last Name</label>
+                <input name="lastName" type="text" class="form-control" id="userLastName" value="<%= user && user.lastName || '' %>" disabled>
+            </div>
+            <div class="col-md-4">
+                <label for="userEmail" class="form-label">Email Address</label>
+                <input name="email" type="email" class="form-control" id="userEmail" value="<%= user && user.email || '' %>" disabled>
+            </div>
+        </div>
+
+        <!-- User's Address -->
+        <div class="row">
+            <div class="col-md-12">
+                <label for="userAddress" class="form-label">Mailing Address</label>
+                <input name="address" type="text" class="form-control" id="userAddress" value="<%= user && user.address || '' %>" disabled>
+            </div>
+        </div>
+
+        <!-- User's City, Province, and Postal Code -->
+        <div class="row">
+            <div class="col-md-4">
+                <label for="userCity" class="form-label">City</label>
+                <input name="city" type="text" class="form-control" id="userCity" value="<%= user && user.city || '' %>" disabled>
+            </div>
+            <div class="col-md-4">
+                <label for="userProvince" class="form-label">Province</label>
+                <input name="province" type="text" class="form-control" id="userProvince" value="<%= user && user.province || '' %>" disabled>
+            </div>
+            <div class="col-md-4">
+                <label for="userPostalCode" class="form-label">Postal Code</label>
+                <input name="postalCode" type="text" class="form-control" id="userPostalCode" value="<%= user && user.postalCode || '' %>" disabled>
+            </div>
+        </div>
+
+        <!-- User's Phone Number, Date of Birth, and Age -->
+        <div class="row">
+            <div class="col-md-4">
+                <label for="userPhone" class="form-label">Phone Number</label>
+                <input name="phone" type="tel" class="form-control" id="userPhone" pattern="[0-9]{3}-[0-9{3}-[0-9]{4}"
+                    placeholder="123-456-7890" value="<%= user && user.phone || '' %>" disabled>
+            </div>
+            <div class="col-md-4">
+                <label for="userDOB" class="form-label">Date of Birth</label>
+                <input name="DOB" type="date" class="form-control" id="userDOB" value="<%= user && user.DOB || '' %>" disabled>
+            </div>
+            <div class="col-md-4">
+                <label for="userAge" class="form-label">Age</label>
+                <input name="age" type="number" class="form-control" id="userAge" min="1" max="120" value="<%= user && user.age || '' %>" disabled>
+            </div>
+        </div>
+
+        <!-- User's Gender and CareCard info -->
+        <div class="row">
+            <div class="col-md-4">
+                <label for="userGender" class="form-label">Gender</label>
+                <select name="gender" class="form-select form-select-md col-mb-3" id="userGender" disabled>
+                    <option selected>Gender</option>
+                    <option value="male" <%= user && user.gender === 'male' ? 'selected' : '' %>>Male</option>
+                    <option value="female" <%= user && user.gender === 'female' ? 'selected' : '' %>>Female</option>
+                    <option value="other" <%= user && user.gender === 'other' ? 'selected' : '' %>>Other</option>
+                </select>
+            </div>
+            <div class="col-md-8">
+                <label for="userCareCard" class="form-label">Care Card Number</label>
+                <input name="careCard" type="text" class="form-control" id="userCareCard" pattern="[0-9]{10}" value="<%= user && user.careCard || '' %>" disabled>
+            </div>
+        </div>
+
+        <!-- User's Doctor -->
+        <div class="row">
+            <div class="col-md-12">
+                <label for="userDoctor" class="form-label">Family Doctor</label>
+                <input name="doctor" type="text" class="form-control" id="userDoctor" value="<%= user && user.doctor || '' %>" disabled>
+            </div>
+        </div>
+
+        <!-- User's Medical History -->
+        <div class="row">
+            <div class="col-md-12">
+                <label for="userMedHistory" class="form-label">Past Medical History</label>
+                <textarea name="medHistory" type="text" class="form-control" id="userMedHistory" rows="3" disabled><%= user && user.medHistory || '' %></textarea>
+            </div>
+        </div>
+
+        <!-- User's Medication -->
+        <div class="row">
+            <div class="col-md-12">
+                <label for="userMedication" class="form-label">Medications</label>
+                <textarea name="medication" type="text" class="form-control" id="userMedication"
+                    placeholder="Medication Name: Dosage, #Times a day" rows="3" disabled><%= user && user.medication || '' %></textarea>
+            </div>
+        </div>
+
+        <!-- User's Allergies -->
+        <div class="row">
+            <div class="col-md-12">
+                <label for="userAllergies" class="form-label">Allergies</label>
+                <textarea name="allergies" type="text" class="form-control" id="userAllergies"
+                    placeholder="Allergy: Severity, Hospitalized or Intubated for this allergy previously?"
+                    rows="3" disabled><%= user && user.allergies || '' %></textarea>
+            </div>
+        </div>
+
+        <div class="col-md-3 mx-auto mt-3">
+            <button type="button" class="btn btn-secondary" id="editButton" onclick="enableForm()">Edit</button>
+            <button type="submit" class="btn btn-primary" id="saveButton">Save</button>
+        </div>
+</form>
+</div>
+
+<script>
+    function enableForm() {
+        const form = document.getElementById('userInfoForm');
+        const inputs = form.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => input.disabled = false);
+        document.getElementById('saveButton').disabled = false;
+    }
+</script>
+
+<%- include("templates/footer") %> 
