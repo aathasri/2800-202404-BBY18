@@ -311,15 +311,17 @@ app.post('/addingDrone', async (req, res) => {
     var name = req.body.name;
     var status = req.body.status;
     var location = req.body.location;
+    var description = req.body.description;
 
 	const schema = Joi.object(
 		{
             name: Joi.string().required(),
 			status: Joi.string().alphanum().max(20).required(),
-			location: Joi.string().max(20).required()
+			location: Joi.string().max(20).required(),
+            description : Joi.string().required()
 		});
 	
-	const validationResult = schema.validate({name, status, location});
+	const validationResult = schema.validate({name, status, location, description});
 	if (validationResult.error != null) {
 	   console.log(validationResult.error);
 	   res.redirect("/addDrone");
@@ -327,7 +329,7 @@ app.post('/addingDrone', async (req, res) => {
    }
 
 	
-	var result = await droneCollection.insertOne({name: name, status: status, location: location, user_type: "drone"});
+	var result = await droneCollection.insertOne({name: name, status: status, location: location, description: description, user_type: "drone"});
 	console.log("Inserted drone");
 
     // req.session.authenticated = true;
