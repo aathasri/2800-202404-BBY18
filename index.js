@@ -24,6 +24,8 @@ const mongodb_session_secret = process.env.MONGODB_SESSION_SECRET;
 
 const node_session_secret = process.env.NODE_SESSION_SECRET;
 
+const maps_api_key = process.env.MAPS_API;
+
 
 var {database} = require('./databaseConnection');
 
@@ -300,8 +302,8 @@ app.get('/logout', (req, res) => {
 
 
 // Added by Aathavan
-app.get('/drones', (req, res) => {
-    res.render('userDroneTracking'); 
+app.get('/userDroneTracking', (req, res) => {
+    res.render('userDroneTracking', {maps_api: maps_api_key}); 
 });
 
 
