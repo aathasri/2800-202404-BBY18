@@ -1,0 +1,121 @@
+<%- include("templates/header") %> 
+<!-- Used userProfileInformation.ejs as a template for orgProfile.
+     All attributions to AI (chat.openai.com) from userProfileInformation are used here. -->
+
+<div class="px-4 py-4 my-5 text-center">
+    <h1 class="display-5 fw-bold text-body-emphasis"> Organization Profile </h1>
+</div>
+
+<div>
+    <form id="orgInfo" action="/orgInfo" method="post">
+
+        <!-- Organization Name, Jurisdiction, and Email Address -->
+        <div class="row">
+            <div class="col-md-4">
+                <label for="orgName" class="form-label">Organization Name</label>
+                <input name="orgName" type="text" class="form-control" id="orgName" value="<%= org && org.orgName || '' %>" disabled>
+            </div>
+            <div class="col-md-4">
+                <label for="orgJurisdiction" class="form-label">Jurisdiction</label>
+                <input name="orgJurisdiction" type="text" class="form-control" id="orgJurisdiction" value="<%= org && org.orgJurisdiction || '' %>" disabled>
+            </div>
+            <div class="col-md-4">
+                <label for="orgEmail" class="form-label">Email Address</label>
+                <input name="orgEmail" type="email" class="form-control" id="orgEmail" value="<%= org && org.orgEmail || '' %>" disabled>
+            </div>
+        </div>
+
+        <!-- Org Headquarters Address -->
+        <div class="row">
+            <div class="col-md-12">
+                <label for="orgAddress" class="form-label">Headquarters Address</label>
+                <input name="orgAddress" type="text" class="form-control" id="orgAddress" value="<%= org && org.orgAddress || '' %>" disabled>
+            </div>
+        </div>
+
+        <!-- Organization Headquarters City, Province, and Postal Code -->
+        <div class="row">
+            <div class="col-md-4">
+                <label for="orgCity" class="form-label">City</label>
+                <input name="orgCity" type="text" class="form-control" id="orgCity" value="<%= org && org.orgCity || '' %>" disabled>
+            </div>
+            <div class="col-md-4">
+                <label for="orgProvince" class="form-label">Province</label>
+                <input name="orgProvince" type="text" class="form-control" id="orgProvince" value="<%= org && org.orgProvince || '' %>" disabled>
+            </div>
+            <div class="col-md-4">
+                <label for="orgPostalCode" class="form-label">Postal Code</label>
+                <input name="orgPostalCode" type="text" class="form-control" id="orgPostalCode" value="<%= org && org.orgPostalCode || '' %>" disabled>
+            </div>
+        </div>
+
+        <!-- Org's Phone Number and Founding -->
+        <div class="row">
+            <div class="col-md-6">
+                <label for="orgPhone" class="form-label">Phone Number</label>
+                <input name="orgPhone" type="tel" class="form-control" id="orgPhone" pattern="[0-9]{3}-[0-9{3}-[0-9]{4}"
+                    placeholder="123-456-7890" value="<%= org && org.phone || '' %>" disabled>
+            </div>
+            <div class="col-md-6">
+                <label for="founded" class="form-label">Founded</label>
+                <input name="orgFounded" type="date" class="form-control" id="founded" value="<%= org && org.orgFounded || '' %>" disabled>
+            </div>
+        </div>
+
+        <!-- Org's Writeup -->
+        <div class="row">
+            <div class="col-md-12">
+                <label for="orgAbout" class="form-label">About us</label>
+                <textarea name="orgAbout" type="text" class="form-control" id="orgAbout"
+                    rows="3" disabled><%= org && org.orgAbout || '' %></textarea>
+            </div>
+        </div>
+
+        <div class="col-md-3 mx-auto mt-3">
+            <button type="button" class="btn btn-secondary" id="editButton" onclick="enableForm()">Edit</button>
+            <button type="submit" class="btn btn-primary" id="saveButton" disabled>Save</button>
+        </div>
+</form>
+</div>
+
+<script>
+    function enableForm() {
+        const form = document.getElementById('orgInfo');
+        const inputs = form.querySelectorAll('input, textarea');
+        inputs.forEach(input => input.disabled = false);
+        document.getElementById('saveButton').disabled = false;
+    }
+</script>
+
+
+<!-- app.get('/orgProfile', async (req, res) => {
+    try {
+        const orgId = req.session.userId;
+        const user = await userCollection.findOne({ _id: new ObjectId(userId)});
+        res.render('orgProfile', { orgId });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// Used ChatGpt to help accept form submission and editing. Chatgpt: chat.openai.com
+app.post('/orgInfo', async (req, res) => {
+    try {
+        const { orgName, orgJurisdiction, orgEmail, orgAddress, orgCity, orgProvince, orgPostalCode, orgPhone, orgFounded, orgAbout } = req.body;
+
+        const orgId = req.session.userId;
+        await userCollection.updateOne(
+            { _id:  new ObjectId(orgId) },
+            { $set: { orgName, orgJurisdiction, orgEmail, orgAddress, orgCity, orgProvince, orgPostalCode, orgPhone, orgFounded, orgAbout }
+        });
+
+        // Redirect the org back to the profile page
+        res.redirect('/orgProfile');
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Internal Server Error');
+    }
+}); -->
+
+<%- include("templates/footer") %> 
