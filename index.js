@@ -34,6 +34,7 @@ const userCollection = database.db(mongodb_database).collection('users');
 app.use(express.urlencoded({extended: false}));
 app.use(express.static(__dirname + "/images"));
 app.use(express.static(__dirname + "/views"));
+app.use(express.static(__dirname + "/js"));
 
 app.set('view engine', 'ejs');
 
@@ -149,8 +150,6 @@ app.get('/forgotPassword', (req,res) => {
 app.get('/createUser', (req,res) => {
 	res.render("createUser");
    });
-
-   
 
 app.post('/submitUser', async (req,res) => {
     var email = req.body.email;
@@ -297,6 +296,12 @@ app.get('/logout', (req, res) => {
         }
         res.redirect('/login');
     });
+});
+
+
+// Added by Aathavan
+app.get('/drones', (req, res) => {
+    res.render('userDroneTracking'); 
 });
 
 

@@ -1,0 +1,16 @@
+<%- include('templates/header') %>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCa6DwUe-8SPcHin4xq117e5-UoSbwZJmw&callback=initMap"
+        async defer></script>
+    <script src="/maps.js" defer></script>
+
+    <div class="card w-50 p-3">
+        <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+        </div>
+        <div class="ratio ratio-1x1">
+            <div id="map"></div>
+        </div>
+    </div>
+
+<%- include('templates/footer') %>
