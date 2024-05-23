@@ -28,6 +28,7 @@ const node_session_secret = process.env.NODE_SESSION_SECRET;
 var {database} = require('./databaseConnection');
 
 const userCollection = database.db(mongodb_database).collection('users');
+const droneCollection = database.db(mongodb_database).collection('drones');
 
 
 
@@ -299,6 +300,44 @@ app.get('/logout', (req, res) => {
     });
 });
 
+app.get('/drones', (req, res) =>{
+    res.render('droneList');
+});
+
+app.get('/addDrone', (req, res) => {
+    res.render('addDrone');
+});
+app.post('/addingDrone', async (req, res) => {
+    var name = req.body.name;
+    var status = req.body.status;
+    var location = req.body.location;
+
+	const schema = Joi.object(
+		{
+            name: Joi.string().required(),
+			status: Joi.string().alphanum().max(20).required(),
+			location: Joi.string().max(20).required()
+		});
+	
+	const validationResult = schema.validate({name, status, location});
+	if (validationResult.error != null) {
+	   console.log(validationResult.error);
+	   res.redirect("/addDrone");
+	   return;
+   }
+
+	
+	var result = await droneCollection.insertOne({name: name, status: status, location: location, user_type: "drone"});
+	console.log("Inserted drone");
+
+    // req.session.authenticated = true;
+    req.session.name = result.name;
+    //Tanner created req.session.userId = result.insertedId; with chatgpt: chat.openai.com
+    // req.session.userId = result.insertedId;
+    req.session.cookiemaxAge = expireTime;
+
+    res.redirect("/addDrone");
+})
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}/`);
