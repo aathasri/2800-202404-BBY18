@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.1626.0",
     "bcrypt": "^5.1.1",
     "connect-mongo": "^5.1.0",
     "crypto": "^1.0.1",
@@ -19,6 +20,8 @@
     "fs": "^0.0.1-security",
     "joi": "^17.13.1",
     "mongodb": "^6.6.2",
+    "mongoose": "^8.4.0",
+    "next-auth": "^4.24.7",
     "nodemailer": "^6.9.13",
     "nodemon": "^3.1.0",
     "path": "^0.12.7"

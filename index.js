@@ -12,6 +12,8 @@ const Joi = require("joi");
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const { ObjectId } = require('mongodb'); // Added by Tanner from Chatgpt: chat.openai.com to save user information from form and repopulate the form with previously entered values.
+var AWS = require("aws-sdk");
+
 
 const expireTime =  1 * 60 * 60 * 1000; 
 
@@ -62,10 +64,71 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+AWS.config.region = 'us-west-1';
+
+function signinCallback(googleUser) {
+    var profile = googleUser.getBasicProfile();
+    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+    console.log('Name: ' + profile.getName());
+    console.log('Email: ' + profile.getEmail());
+
+    document.getElementById('userEmail').innerHTML = profile.getEmail();
+    // document.getElementById('profile-name').innerHTML = profile.getName(); 
+
+    AWS.config.credentials = new AWS.WebIdentityCredentials({
+        RoleArn: 'arn:aws:iam::975049925657:role/asclepius',
+        ProviderId: null, // this is null for Google
+        WebIdentityToken: googleUser.getAuthResponse().id_token
+    });
+
+    // Obtain AWS credentials
+    AWS.config.credentials.get(async function(){
+        // Access AWS resources here.
+        var accessKeyId = AWS.config.credentials.accessKeyId;
+        var secretAccessKey = AWS.config.credentials.secretAccessKey;
+        var sessionToken = AWS.config.credentials.sessionToken;
+
+        // Update the URL to point to "userProfileInformation" endpoint
+        const response = await fetch('http://localhost:3000/userProfileInfo', {
+            method: 'POST',
+            body: JSON.stringify({
+                'AccessKeyId': accessKeyId,
+                'SecretAccessKey': secretAccessKey,
+                'SessionToken': sessionToken,
+                'UserId': profile.getId(),
+                'UserName': profile.getName(),
+                'UserEmail': profile.getEmail()
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        // Handle the response from the server
+        const myJson = await response.json(); //extract JSON from the http response
+        console.log(myJson);
+
+        // Optionally, redirect to the user profile information page if needed
+        // res.redirect("userProfileInformation");
+            window.location.href = '/userProfileInformation';
+    });
+}
+
+
+function signOut() {
+    var auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+        console.log('User signed out.');
+    });
+}
+
+
+
 app.get('/login', (req,res) => {
     var errorMessage = req.session.errorMessage || '';
     req.session.errorMessage = '';
     res.render("login", {errorMessage: errorMessage});
+
 });
 
 app.post('/forgotPassword', async (req, res) => {
@@ -151,6 +214,14 @@ app.get('/createUser', (req,res) => {
    });
 
    
+app.get('/userType', (req,res) => {
+	res.render("userType");
+   });
+
+      
+app.get('/createOrganization', (req,res) => {
+	res.render("createOrganization");
+   });
 
 app.post('/submitUser', async (req,res) => {
     var email = req.body.email;
@@ -183,6 +254,40 @@ app.post('/submitUser', async (req,res) => {
     req.session.cookiemaxAge = expireTime;
 
     res.redirect("/userProfileInfo");
+
+});
+
+app.post('/submitOrg', async (req,res) => {
+    var email = req.body.email;
+    var username = req.body.username;
+    var password = req.body.password;
+
+	const schema = Joi.object(
+		{
+            email: Joi.string().email().required(),
+			username: Joi.string().alphanum().max(20).required(),
+			password: Joi.string().max(20).required()
+		});
+	
+	const validationResult = schema.validate({email, username, password});
+	if (validationResult.error != null) {
+	   console.log(validationResult.error);
+	   res.redirect("/createUser");
+	   return;
+   }
+
+    var hashedPassword = await bcrypt.hash(password, saltRounds);
+	
+	var result = await userCollection.insertOne({email: email, username: username, password: hashedPassword, user_type: "user"});
+	console.log("Inserted user");
+
+    req.session.authenticated = true;
+    req.session.username = result.username;
+    //Tanner created req.session.userId = result.insertedId; with chatgpt: chat.openai.com
+    req.session.userId = result.insertedId;
+    req.session.cookiemaxAge = expireTime;
+
+    res.redirect("/orgProfileInfo");
 
 });
 
@@ -269,6 +374,17 @@ app.get('/userProfileInfo', async (req, res) => {
     }
 });
 
+app.get('/orgProfileInfo', async (req, res) => {
+    try {
+        const userId = req.session.userId;
+        const user = await userCollection.findOne({ _id: new ObjectId(userId)});
+        res.render('orgProfileInformation', { user });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 // Used ChatGpt to help accept form submission and editing. Chatgpt: chat.openai.com
 app.post('/userInformation', async (req, res) => {
     try {
@@ -288,6 +404,24 @@ app.post('/userInformation', async (req, res) => {
     }
 })
 
+app.post('/orgInformation', async (req, res) => {
+    try {
+        const { firstName, lastName, email, address, city, province, postalCode, phone, DOB, age, gender, careCard, doctor, medHistory, medication, allergies } = req.body;
+
+        const userId = req.session.userId;
+        await userCollection.updateOne(
+            { _id:  new ObjectId(userId) },
+            { $set: { firstName, lastName, email, address, city, province, postalCode, phone, DOB, age, gender, careCard, doctor, medHistory, medication, allergies }
+        });
+
+        // Redirect the user to a success page or back to the profile page
+        res.redirect('/orgProfileInfo');
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Internal Server Error');
+    }
+})
+
 app.get('/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) {
@@ -297,6 +431,7 @@ app.get('/logout', (req, res) => {
         }
         res.redirect('/login');
     });
+    signOut();
 });
 
 
