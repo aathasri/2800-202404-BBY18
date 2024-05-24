@@ -1,6 +1,6 @@
 <%- include('templates/headerAuthenticated') %>
 <head>
-    <title>Drone List</title>
+    <title>Location List</title>
     <style>
         #x {
             font-family: Arial, sans-serif;
@@ -48,33 +48,24 @@
 <br>
 <body id="x">
     <div class="container">
-        <h1>Drone List</h1>
+        <h1>Location List</h1>
         <table border="1">
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Status</th>
                     <th>Location</th>
                     <th>Description</th>
-                    <th>id</th>
-
-                    <th>Details</th>
                 </tr>
             </thead>
             <tbody>
-                <% drones.forEach(drone => { %>
+                <% locations.forEach(location => { %>
                     <tr>
-                        <td><%= drone.name %></td>
-                        <td><%= drone.status %></td>
-                        <td><%= drone.location %></td>
-                        <td><%= drone.description %></td>
-                        <td><%= drone._id %></td>
-
-                        <td><a href="/droneDetails?id=<%= drone.id %>">View Details</a></td>
+                        <td><%= location.name %></td>
+                        <td><%= location.location %></td>
+                        <td><%= location.description %></td>
                     </tr>
                 <% }); %>
             </tbody>
         </table>
     </div>
-
-<%- include('templates/footerAuthenticatedOrg') %>
+<%- include('templates/footerAuthenticatedUser') %>
