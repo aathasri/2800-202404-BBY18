@@ -87,35 +87,4 @@
     }
 </script>
 
-
-<!-- app.get('/orgProfile', async (req, res) => {
-    try {
-        const orgId = req.session.userId;
-        const user = await userCollection.findOne({ _id: new ObjectId(userId)});
-        res.render('orgProfile', { orgId });
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).send('Internal Server Error');
-    }
-});
-
-// Used ChatGpt to help accept form submission and editing. Chatgpt: chat.openai.com
-app.post('/orgInfo', async (req, res) => {
-    try {
-        const { orgName, orgJurisdiction, orgEmail, orgAddress, orgCity, orgProvince, orgPostalCode, orgPhone, orgFounded, orgAbout } = req.body;
-
-        const orgId = req.session.userId;
-        await userCollection.updateOne(
-            { _id:  new ObjectId(orgId) },
-            { $set: { orgName, orgJurisdiction, orgEmail, orgAddress, orgCity, orgProvince, orgPostalCode, orgPhone, orgFounded, orgAbout }
-        });
-
-        // Redirect the org back to the profile page
-        res.redirect('/orgProfile');
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).send('Internal Server Error');
-    }
-}); -->
-
 <%- include("templates/footer") %> 
