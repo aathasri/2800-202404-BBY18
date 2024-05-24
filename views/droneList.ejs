@@ -1,6 +1,17 @@
-<%- include('templates/headerAuthenticated') %>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Drone List</title>
+
+    <!-- Link to Bootstrap CSS-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Link to your custom CSS file -->
+    <link rel="stylesheet" href="/index.css">
+
     <style>
         #x {
             font-family: Arial, sans-serif;
@@ -59,39 +70,72 @@
         }
     </style>
 </head>
-<br>
-<br>
 <body id="x">
-    <div class="container">
-        <h1>Drone List</h1>
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Status</th>
-                    <th>Location</th>
-                    <th>Description</th>
-                    <th>id</th>
+    <!-- Header -->
+    <nav class="navbar p-2">
+        <div class="container-fluid">
+            <!-- Branding -->
+            <a class="navbar-brand d-flex align-items-center" href="#/">
+                <img style="max-height: 2em; margin-right: 5px;" src="/logo.png" alt="Logo">
+                <h1 id="companyName" class="mb-0 text-light">Asclepius</h1>
+            </a>          
+            <!-- Hamburger Menu -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/settings">Settings</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/aboutUs">About Us</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/contact">Contact</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/logout">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-                    <th>Details</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% drones.forEach(drone => { %>
+    <main>
+        <div class="container">
+            <h1>Drone List</h1>
+            <table border="1">
+                <thead>
                     <tr>
-                        <td><%= drone.name %></td>
-                        <td><%= drone.status %></td>
-                        <td><%= drone.location %></td>
-                        <td><%= drone.description %></td>
-                        <td><%= drone._id %></td>
-
-                        <td><a href="/droneDetails?id=<%= drone.id %>">View Details</a></td>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Location</th>
+                        <th>Description</th>
+                        <th>id</th>
                     </tr>
-                <% }); %>
-            </tbody>
-        </table>
-    </div>
-    <div class="back-button-container">
-        <button class="back-button" onclick="window.history.back()">Back</button>
-    </div>
-<%- include('templates/footerAuthenticatedOrg') %>
+                </thead>
+                <tbody>
+                    <% drones.forEach(drone => { %>
+                        <tr>
+                            <td><%= drone.name %></td>
+                            <td><%= drone.status %></td>
+                            <td><%= drone.location %></td>
+                            <td><%= drone.description %></td>
+                            <td><%= drone._id %></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+        <div class="back-button-container">
+            <button class="back-button" onclick="window.history.back()">Back</button>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <%- include('templates/footerAuthenticatedOrg') %>
+</body>
+</html>
