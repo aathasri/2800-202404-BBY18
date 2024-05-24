@@ -31,12 +31,14 @@ var {database} = require('./databaseConnection');
 
 const emergencyCollection = database.db(mongodb_database).collection('emergency')
 const userCollection = database.db(mongodb_database).collection('users');
+const droneCollection = database.db(mongodb_database).collection('drones');
 
 
 
 app.use(express.urlencoded({extended: false}));
 app.use(express.static(__dirname + "/images"));
 app.use(express.static(__dirname + "/views"));
+app.use(express.static(__dirname + "/css"));
 
 app.set('view engine', 'ejs');
 
@@ -509,13 +511,100 @@ app.get('/logout', (req, res) => {
     });
 });
 
+app.get('/droneList', async (req, res) => {
+    try {
+        const drones = await droneCollection.find().toArray();
+        res.render('droneList', { drones: drones });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+
+app.get('/addDrone', (req, res) => {
+    res.render('addDrone');
+});
+app.post('/addingDrone', async (req, res) => {
+    var name = req.body.name;
+    var status = req.body.status;
+    var location = req.body.location;
+    var description = req.body.description;
+
+	const schema = Joi.object(
+		{
+            name: Joi.string().required(),
+			status: Joi.string().alphanum().max(20).required(),
+			location: Joi.string().max(20).required(),
+            description : Joi.string().required()
+		});
+	
+	const validationResult = schema.validate({name, status, location, description});
+	if (validationResult.error != null) {
+	   console.log(validationResult.error);
+	   res.redirect("/addDrone");
+	   return;
+   }
+
+	
+	var result = await droneCollection.insertOne({name: name, status: status, location: location, description: description, user_type: "drone"});
+	console.log("Inserted drone");
+
+    // req.session.authenticated = true;
+    req.session.name = result.name;
+    //Tanner created req.session.userId = result.insertedId; with chatgpt: chat.openai.com
+    // req.session.userId = result.insertedId;
+    req.session.cookiemaxAge = expireTime;
+
+    res.redirect("/addDrone");
+})
+
+// REMOVE AT END
+app.get('/test', (req, res) => {
+    res.render('test');
+});
 
 app.get('/orgDashboard', sessionValidation, orgAuthorization, (req, res) => {
     res.render('orgDashboard');
 });
 
+// import {v2 as cloudinary} from 'cloudinary';
+
+// (async function() {
+
+//     // Configuration
+//     cloudinary.config({ 
+//         cloud_name: CLOUDINARY_CLOUD_NAME, 
+//         api_key: CLOUDINARY_CLOUD_KEY, 
+//         api_secret:CLOUDINARY_CLOUD_SECRET // Click 'View Credentials' below to copy your API secret
+//     });
+    
+//     // Upload an image
+//     const uploadResult = await cloudinary.uploader.upload("https://res.cloudinary.com/demo/image/upload/getting-started/shoes.jpg", {
+//         public_id: "shoes"
+//     }).catch((error)=>{console.log(error)});
+    
+//     console.log(uploadResult);
+    
+//     // Optimize delivery by resizing and applying auto-format and auto-quality
+//     const optimizeUrl = cloudinary.url("shoes", {
+//         fetch_format: 'auto',
+//         quality: 'auto'
+//     });
+    
+//     console.log(optimizeUrl);
+    
+//     // Transform the image: auto-crop to square aspect_ratio
+//     const autoCropUrl = cloudinary.url("shoes", {
+//         crop: 'auto',
+//         gravity: 'auto',
+//         width: 500,
+//         height: 500,
+//     });
+    
+//     console.log(autoCropUrl);    
+// })();
+
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}/`);
 });
-
-
