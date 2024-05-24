@@ -173,8 +173,6 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-<<<<<<< HEAD
-=======
 AWS.config.region = 'us-west-1';
 
 function signinCallback(googleUser) {
@@ -226,7 +224,6 @@ function signinCallback(googleUser) {
 }
 
 
->>>>>>> fecc0644814f5b4d58917c15d80e6f2b336fcf6b
 
 app.get('/orgProfile', sessionValidation, orgAuthorization, async (req, res) => {
     try {
@@ -266,7 +263,6 @@ app.post('/orgInfo', async (req, res) => {
 
 //Put at top with other db collections
 
-<<<<<<< HEAD
   app.get('/userDash',  sessionValidation, userAuthorization, async (req, res) => {
       try {
           const userId = req.session.userId;
@@ -302,18 +298,6 @@ app.post('/orgInfo', async (req, res) => {
           res.status(500).send('Internal Server Error');
       }
   });
-=======
-app.get('/userDash', async (req, res) => {
-    try {
-        const userId = req.session.userId;
-        const user = await userCollection.findOne({ _id: new ObjectId(userId) });
-        res.render('userDash', { user });
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).send('Internal Server Error');
-    }
-});
->>>>>>> fecc0644814f5b4d58917c15d80e6f2b336fcf6b
 
 
 // Used ChatGpt to help accept form submission and editing. Chatgpt: chat.openai.com
