@@ -12,6 +12,47 @@ const Joi = require("joi");
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const { ObjectId } = require('mongodb'); // Added by Tanner from Chatgpt: chat.openai.com to save user information from form and repopulate the form with previously entered values.
+const multer = require('multer');
+
+// Storage for uploaded files.
+const storage = multer.diskStorage( {
+    destination: function(req, file, cb) {
+    cb(null, path.join(__dirname, 'images')); // Destination folder.
+    },
+    filename: function(req, file, cb) {
+        cb(null, file.fieldname +'-' + Date.now() + path.extname(file.originalname)); // File name.
+    }
+});
+
+// Initialize multer upload middleware.
+const upload = multer({ storage: storage });
+
+// Route to handle file upload.
+app.post('/uploadProfilePicture', upload.single('profilePicture'), async (req, res) => {
+    try {
+        if (!req.file) {
+            res.status(400).send('No file uploaded');
+            return;
+        }
+
+        // File uploaded successfully, get the filename
+        const filename = req.file.filename;
+
+        // Update the user document in the database with the filename of the profile picture
+        const userId = req.session.userId; // Assuming you have a user ID stored in the session
+        await userCollection.updateOne({ _id: new ObjectId(userId) }, { $set: { profilePicture: filename } });
+
+        // Log to console
+        console.log(`Profile picture filename "${filename}" saved to MongoDB for user ID "${userId}"`);
+
+        res.send('File uploaded successfully');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+
 
 const expireTime =  1 * 60 * 60 * 1000; 
 
@@ -266,23 +307,59 @@ app.get('/userProfileInfo', async (req, res) => {
 });
 
 // Used ChatGpt to help accept form submission and editing. Chatgpt: chat.openai.com
-app.post('/userInformation', async (req, res) => {
+app.post('/userInformation', upload.single('profilePicture'), async (req, res) => {
     try {
         const { firstName, lastName, email, address, city, province, postalCode, phone, DOB, age, gender, careCard, doctor, medHistory, medication, allergies } = req.body;
 
+        // Get the user ID from the session
         const userId = req.session.userId;
-        await userCollection.updateOne(
-            { _id:  new ObjectId(userId) },
-            { $set: { firstName, lastName, email, address, city, province, postalCode, phone, DOB, age, gender, careCard, doctor, medHistory, medication, allergies }
-        });
 
-        // Redirect the user to a success page or back to the profile page
+        // Create an object with the user information to update
+        const userInfoToUpdate = {
+            firstName,
+            lastName,
+            email,
+            address,
+            city,
+            province,
+            postalCode,
+            phone,
+            DOB,
+            age,
+            gender,
+            careCard,
+            doctor,
+            medHistory,
+            medication,
+            allergies
+        };
+
+        // Check if a profile picture was uploaded
+        if (req.file) {
+            // Read the file data
+            const profilePictureData = fs.readFileSync(req.file.path);
+
+            // Add the profile picture data to the user information object
+            userInfoToUpdate.profilePictureData = profilePictureData;
+
+            // Delete the temporary file uploaded by multer
+            fs.unlinkSync(req.file.path);
+        }
+
+        // Update the user document in the database with the user information
+        await userCollection.updateOne(
+            { _id: new ObjectId(userId) },
+            { $set: userInfoToUpdate }
+        );
+
+        // Redirect the user to the profile page
         res.redirect('/userProfileInfo');
     } catch (error) {
         console.error('Error:', error);
         res.status(500).send('Internal Server Error');
     }
-})
+});
+
 
 app.get('/logout', (req, res) => {
     req.session.destroy((err) => {
@@ -299,6 +376,31 @@ app.get('/logout', (req, res) => {
 app.get('/orgDashboard', (req, res) => {
     res.render('orgDashboard');
 });
+
+app.get('/userProfilePicture/:userId', async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const user = await userCollection.findOne({ _id: new ObjectId(userId) });
+
+        // Check if the user exists and has a profile picture
+        if (user && user.profilePictureData) {
+            // Set the appropriate content type for the image
+            res.contentType('image/jpeg'); // Adjust the content type based on the image format
+
+            // Send the profile picture data as the response
+            res.send(user.profilePictureData.buffer); // Assuming profilePictureData is a Binary object
+        } else {
+            // If the user or profile picture data doesn't exist, send a default image or error message
+            res.sendFile(path.join(__dirname, 'images', 'default-profile-picture.png')); // Send default image
+            // Alternatively, you can send an error message
+            // res.status(404).send('Profile picture not found');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}/`);

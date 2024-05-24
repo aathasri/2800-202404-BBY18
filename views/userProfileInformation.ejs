@@ -2,13 +2,25 @@
 
 <div class="px-4 py-4 my-5 text-center">
     <h1 class="display-5 fw-bold text-body-emphasis"> User Profile and Medical History</h1>
+    <div class="row mb-3">
+        <div class="col-md-6 offset-md-3 text-center">
+            <div class="position-relative d-inline-block">
+                <img src="/userProfilePicture/<%= user && user._id %>" class="img-fluid rounded-circle mx-auto d-block mb-3" alt="Profile Picture" style="width: 100px; height: 100px;">
+                
+            </div>
+        </div>
 </div>
-
 <div>
-    <form id="userInfo" action="/userInformation" method="post">
-
+    <form id="userInfo" action="/userInformation" method="post" enctype="multipart/form-data">
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <!-- Move the button here -->
+                <label for="profilePictureInput" class="btn btn-primary position-relative mt-2">Change Profile Picture</label>
+                <input type="file" accept="image/*" name="profilePicture" id="profilePictureInput" style="display: none;">
+                </div>
+            </div>
+        </div>
         <!-- User's First Name, Last Name, and Email -->
-        <!-- Had chatgpt help with the ejs for the conditionals in the values -->
         <div class="row">
             <div class="col-md-4">
                 <label for="userFirstName" class="form-label">First Name</label>
@@ -23,7 +35,7 @@
                 <input name="email" type="email" class="form-control" id="userEmail" value="<%= user && user.email || '' %>" disabled>
             </div>
         </div>
-
+    
         <!-- User's Address -->
         <div class="row">
             <div class="col-md-12">
