@@ -227,9 +227,10 @@ function signinCallback(googleUser) {
 
 app.get('/orgProfile', sessionValidation, orgAuthorization, async (req, res) => {
     try {
-        const orgId = req.session.userId;
-        const org = await userCollection.findOne({ _id: new ObjectId(orgId) });
-        res.render('orgProfile', { org });
+        const userId = req.session.userId;
+        const user = await userCollection.findOne({ _id: new ObjectId(userId) });
+        res.render('orgProfile', { user });
+        console.log('Fetched organization:', user); 
     } catch (error) {
         console.error('Error:', error);
         res.status(500).send('Internal Server Error');
@@ -237,7 +238,7 @@ app.get('/orgProfile', sessionValidation, orgAuthorization, async (req, res) => 
 });
 
 // Used ChatGpt to help accept form submission and editing. Chatgpt: chat.openai.com
-app.post('/orgInfo', async (req, res) => {
+app.post('/orgInfo', upload.single('profilePicture'), async (req, res) => {
 
     if (!req.session.authenticated) {
         res.redirect('/');
@@ -246,20 +247,72 @@ app.post('/orgInfo', async (req, res) => {
     try {
         const { orgName, orgJurisdiction, orgEmail, orgAddress, orgCity, orgProvince, orgPostalCode, orgPhone, orgFounded, orgAbout } = req.body;
 
-        const orgId = req.session.userId;
-        await userCollection.updateOne(
-            { _id: new ObjectId(orgId) },
-            {
-                $set: { orgName, orgJurisdiction, orgEmail, orgAddress, orgCity, orgProvince, orgPostalCode, orgPhone, orgFounded, orgAbout }
-            });
+        const userId = req.session.userId;
 
-        // Redirect the org back to the profile page
+        const orgInfoToUpdate = {
+            orgName,
+            orgJurisdiction,
+            orgEmail,
+            orgAddress,
+            orgCity,
+            orgProvince,
+            orgPostalCode,
+            orgPhone,
+            orgFounded,
+            orgAbout
+        };
+
+        if (req.file) {
+            const profilePictureData = fs.readFileSync(req.file.path);
+
+            orgInfoToUpdate.profilePictureData = profilePictureData;
+
+            fs.unlinkSync(req.file.path);
+        }
+
+        await userCollection.updateOne(
+            { _id: new ObjectId(userId) },
+            { $set: orgInfoToUpdate }
+        );
+
         res.redirect('/orgProfile');
+        } catch (error) {
+            console.error('Error:', error);
+            res.status(500).send('Internal Server Error')
+        }
+});
+app.get('/orgProfilePicture/:userId', async (req, res) => {
+    
+    try {
+        const userId = req.params.userId;
+        const user = await userCollection.findOne({ _id: new ObjectId(userId) });
+
+        if (user && user.profilePictureData) {
+            res.contentType('image/jpeg');
+            res.send(user.profilePictureData.buffer);
+        } else {
+            res.sendFile(path.join(__dirname, 'images', 'gojo.png'));
+        }       
     } catch (error) {
         console.error('Error:', error);
         res.status(500).send('Internal Server Error');
     }
 });
+
+//         const orgId = req.session.userId;
+//         await userCollection.updateOne(
+//             { _id: new ObjectId(orgId) },
+//             {
+//                 $set: { orgName, orgJurisdiction, orgEmail, orgAddress, orgCity, orgProvince, orgPostalCode, orgPhone, orgFounded, orgAbout }
+//             });
+
+//         // Redirect the org back to the profile page
+//         res.redirect('/orgProfile');
+//     } catch (error) {
+//         console.error('Error:', error);
+//         res.status(500).send('Internal Server Error');
+//     }
+// });
 
 //Put at top with other db collections
 
