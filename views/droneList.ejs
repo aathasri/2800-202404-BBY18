@@ -56,6 +56,8 @@
                     <th>Status</th>
                     <th>Location</th>
                     <th>Description</th>
+                    <th>id</th>
+
                     <th>Details</th>
                 </tr>
             </thead>
@@ -66,6 +68,8 @@
                         <td><%= drone.status %></td>
                         <td><%= drone.location %></td>
                         <td><%= drone.description %></td>
+                        <td><%= drone._id %></td>
+
                         <td><a href="/droneDetails?id=<%= drone.id %>">View Details</a></td>
                     </tr>
                 <% }); %>
