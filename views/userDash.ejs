@@ -1,0 +1,71 @@
+<%- include("templates/headerAuthenticated") %> 
+
+<div class="px-4 py-5 my-5 text-center">
+    <h1 class="display-5 fw-bold text-body-emphasis">Welcome, <%= user.username %> to Asclepius</h1>
+    <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4"></p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <form id="callForHelpForm" action="/callForHelp" method="post">
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#callForHelpModal">Call For Help</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Call for Help Modal -->
+<div class="modal fade" id="callForHelpModal" tabindex="-1" role="dialog" aria-labelledby="emergencyModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="emergencyModalLabel">Emergency</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h1>Are you sure you would like to call 911 for help?</h1>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="confirmCallForHelp" class="btn btn-danger">Call For Help</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Your call for help has been sent successfully.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Eventlisteners created by chatgpt (chat.openai.com) -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('confirmCallForHelp').addEventListener('click', function () {
+            // Close the emergency modal
+            var callForHelpModal = new bootstrap.Modal(document.getElementById('callForHelpModal'));
+            callForHelpModal.hide();
+
+            // Show the confirmation modal
+            var confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+            confirmationModal.show();
+
+            // After the confirmation modal closes, submit the form
+            document.getElementById('confirmationModal').addEventListener('hidden.bs.modal', function () {
+                document.getElementById('callForHelpForm').submit();
+            }, { once: true });
+        });
+    });
+</script>
+
+<%- include("templates/footerAuthenticatedUser") %>

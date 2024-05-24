@@ -12,8 +12,71 @@ const Joi = require("joi");
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const { ObjectId } = require('mongodb'); // Added by Tanner from Chatgpt: chat.openai.com to save user information from form and repopulate the form with previously entered values.
+const multer = require('multer');
 
-const expireTime =  1 * 60 * 60 * 1000; 
+// Storage for uploaded files.
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, path.join(__dirname, 'images')); // Destination folder.
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname)); // File name.
+    }
+});
+
+// Initialize multer upload middleware.
+const upload = multer({ storage: storage });
+
+// Route to handle file upload.
+app.post('/uploadProfilePicture', upload.single('profilePicture'), async (req, res) => {
+    try {
+        if (!req.file) {
+            res.status(400).send('No file uploaded');
+            return;
+        }
+
+        // File uploaded successfully, get the filename
+        const filename = req.file.filename;
+
+        // Update the user document in the database with the filename of the profile picture
+        const userId = req.session.userId; // Assuming you have a user ID stored in the session
+        await userCollection.updateOne({ _id: new ObjectId(userId) }, { $set: { profilePicture: filename } });
+
+        // Log to console
+        console.log(`Profile picture filename "${filename}" saved to MongoDB for user ID "${userId}"`);
+
+        res.send('File uploaded successfully');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+const handleSuccessResponse = (response) => {
+    console.log(response.access_token)
+  }
+  
+  const handleErrorResponse = (response) => {
+    console.log(response)
+  }
+  
+  const signInWithGoogle = () => {
+    // create params
+    const params = {
+      client_id: 822365614592-fd7gaj776mruumefv8ncadfo89ok6nuv.apps.googleusercontent.com,
+      callback: handleSuccessResponse,
+      error_callback: handleErrorResponse,
+    }
+    
+    // create client
+    const client = window.google.accounts.oauth2.initTokenClient(params);
+    
+    // Request token
+    client.requestAccessToken();
+}
+
+
+const expireTime = 1 * 60 * 60 * 1000;
 
 
 const mongodb_host = process.env.MONGODB_HOST;
@@ -24,35 +87,104 @@ const mongodb_session_secret = process.env.MONGODB_SESSION_SECRET;
 
 const node_session_secret = process.env.NODE_SESSION_SECRET;
 
+const maps_api_key = process.env.MAPS_API;
 
-var {database} = require('./databaseConnection');
 
+var { database } = require('./databaseConnection');
+
+const emergencyCollection = database.db(mongodb_database).collection('emergency')
 const userCollection = database.db(mongodb_database).collection('users');
+const droneCollection = database.db(mongodb_database).collection('drones');
+const locationCollection = database.db(mongodb_database).collection('location');
 
 
 
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.static(__dirname + "/images"));
 app.use(express.static(__dirname + "/views"));
+app.use(express.static(__dirname + "/js"));
+app.use(express.static(__dirname + "/css"));
 
 app.set('view engine', 'ejs');
 
 
 var mongoStore = MongoStore.create({
-	mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
-	crypto: {
-		secret: mongodb_session_secret
-	}
+    mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
+    crypto: {
+        secret: mongodb_session_secret
+    }
 })
 
-app.use(session({ 
+app.use(session({
     secret: node_session_secret,
-	store: mongoStore, 
-	saveUninitialized: false, 
-	resave: true,
-    cookie: {maxAge: expireTime }
+    store: mongoStore,
+    saveUninitialized: false,
+    resave: true,
+    cookie: { maxAge: expireTime }
 }
 ));
+
+function isValidSession(req) {
+    if (req.session.authenticated) {
+        return true;
+    }
+    return false;
+}
+
+function sessionValidation(req, res, next) {
+    if (isValidSession(req)) {
+        next();
+    }
+    else {
+        res.redirect('/login');
+    }
+}
+
+function isOrg(req) {
+    if (req.session.user_type == 'org') {
+        return true;
+    }
+    return false;
+}
+
+function orgAuthorization(req, res, next) {
+    if (!isOrg(req)) {
+        res.status(403);
+        console.log('not authorized');
+        res.render("errorMessage", {error: "Not Authorized"});
+        // return;
+    }
+    else {
+        next();
+    }
+}
+
+function isUser(req) {
+    if (req.session.user_type == 'user') {
+        return true;
+    }
+    return false;
+}
+
+function userAuthorization(req, res, next) {
+    if (!isUser(req)) {
+        res.status(403);
+        console.log('not authorized');
+        res.render("errorMessage", {error: "Not Authorized"});
+        // return;
+    }
+    else {
+        next();
+    }
+}
+
+function requireAuth(req, res, next) {
+    if (!req.session.authenticated) {
+        res.redirect('/');
+    } else {
+        next();
+    }
+}
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -62,12 +194,144 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-app.get('/login', (req,res) => {
-    var errorMessage = req.session.errorMessage || '';
-    req.session.errorMessage = '';
-    res.render("login", {errorMessage: errorMessage});
+
+
+
+app.get('/orgProfile', sessionValidation, orgAuthorization, async (req, res) => {
+    try {
+        const userId = req.session.userId;
+        const user = await userCollection.findOne({ _id: new ObjectId(userId) });
+        res.render('orgProfile', { user });
+        console.log('Fetched organization:', user); 
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
+// Used ChatGpt to help accept form submission and editing. Chatgpt: chat.openai.com
+app.post('/orgInfo', upload.single('profilePicture'), async (req, res) => {
+
+    if (!req.session.authenticated) {
+        res.redirect('/');
+    }
+
+    try {
+        const { orgName, orgJurisdiction, orgEmail, orgAddress, orgCity, orgProvince, orgPostalCode, orgPhone, orgFounded, orgAbout } = req.body;
+
+        const userId = req.session.userId;
+
+        const orgInfoToUpdate = {
+            orgName,
+            orgJurisdiction,
+            orgEmail,
+            orgAddress,
+            orgCity,
+            orgProvince,
+            orgPostalCode,
+            orgPhone,
+            orgFounded,
+            orgAbout
+        };
+
+        if (req.file) {
+            const profilePictureData = fs.readFileSync(req.file.path);
+
+            orgInfoToUpdate.profilePictureData = profilePictureData;
+
+            fs.unlinkSync(req.file.path);
+        }
+
+        await userCollection.updateOne(
+            { _id: new ObjectId(userId) },
+            { $set: orgInfoToUpdate }
+        );
+
+        res.redirect('/orgProfile');
+        } catch (error) {
+            console.error('Error:', error);
+            res.status(500).send('Internal Server Error')
+        }
+});
+app.get('/orgProfilePicture/:userId', async (req, res) => {
+    
+    try {
+        const userId = req.params.userId;
+        const user = await userCollection.findOne({ _id: new ObjectId(userId) });
+
+        if (user && user.profilePictureData) {
+            res.contentType('image/jpeg');
+            res.send(user.profilePictureData.buffer);
+        } else {
+            res.sendFile(path.join(__dirname, 'images', 'gojo.png'));
+        }       
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+//         const orgId = req.session.userId;
+//         await userCollection.updateOne(
+//             { _id: new ObjectId(orgId) },
+//             {
+//                 $set: { orgName, orgJurisdiction, orgEmail, orgAddress, orgCity, orgProvince, orgPostalCode, orgPhone, orgFounded, orgAbout }
+//             });
+
+//         // Redirect the org back to the profile page
+//         res.redirect('/orgProfile');
+//     } catch (error) {
+//         console.error('Error:', error);
+//         res.status(500).send('Internal Server Error');
+//     }
+// });
+
+//Put at top with other db collections
+
+  app.get('/userDash',  sessionValidation, userAuthorization, async (req, res) => {
+      try {
+          const userId = req.session.userId;
+          const user = await userCollection.findOne({ _id: new ObjectId(userId)});
+          res.render('userDash', { user });
+      } catch (error) {
+          console.error('Error:', error);
+          res.status(500).send('Internal Server Error');
+      }
+  });
+  
+  
+  // Used ChatGpt to help accept form submission and editing. Chatgpt: chat.openai.com
+  app.post('/callForHelp', async (req, res) => {
+      try {
+  
+          // Used gpt to figure out how to create a timestamp.
+          const timeStamp = new Date();
+          const formattedTimestamp = timeStamp.toLocaleString();
+  
+          // Gets the user's information
+          const userId = req.session.userId;
+          const user = await userCollection.findOne({ _id: new ObjectId(userId)});
+  
+          //Take relevant information from user and provide to org.
+          await emergencyCollection.insertOne({userId: req.session.userId, username: req.session.username, location: "" , time: formattedTimestamp, status: "active"  })
+  
+  
+          // Redirect the org back to the profile page
+          res.redirect('/userDroneTracking');
+      } catch (error) {
+          console.error('Error:', error);
+          res.status(500).send('Internal Server Error');
+      }
+  });
+
+app.get('/login', (req, res) => {
+    var errorMessage = req.session.errorMessage || '';
+    req.session.errorMessage = '';
+    res.render("login", { errorMessage: errorMessage });
+
+});
+
+// Contains GPT code to help with the password reset with crypto tokens
 app.post('/forgotPassword', async (req, res) => {
     const { email } = req.body;
     const user = await userCollection.findOne({ email });
@@ -77,14 +341,14 @@ app.post('/forgotPassword', async (req, res) => {
         return;
     }
 
-    // Generate a unique token for password reset
+    // ChatGPT provided the following code to generate a unique token (hexa) for password reset
     const token = crypto.randomBytes(20).toString('hex');
     user.resetPasswordToken = token;
     user.resetPasswordExpires = Date.now() + 3600000; // Token expires in 1 hour
 
     await userCollection.updateOne({ email }, { $set: { resetPasswordToken: token, resetPasswordExpires: user.resetPasswordExpires } });
 
-    // Send the reset link to user's email
+
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to: email,
@@ -108,6 +372,7 @@ app.post('/forgotPassword', async (req, res) => {
 });
 
 // Route for rendering password reset form
+// Generated by chatGPT: chat.openai.com 5/17/2024
 app.get('/reset/:token', async (req, res) => {
     const user = await userCollection.findOne({
         resetPasswordToken: req.params.token,
@@ -122,6 +387,7 @@ app.get('/reset/:token', async (req, res) => {
 });
 
 // Route for processing password reset
+// Generated by chatGPT: chat.openai.com 5/17/2024
 app.post('/reset/:token', async (req, res) => {
     const user = await userCollection.findOne({
         resetPasswordToken: req.params.token,
@@ -132,62 +398,105 @@ app.post('/reset/:token', async (req, res) => {
         res.redirect('/login');
         return;
     }
-
     const { password } = req.body;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-
     await userCollection.updateOne({ email: user.email }, { $set: { password: hashedPassword, resetPasswordToken: null, resetPasswordExpires: null } });
-
     req.session.successMessage = 'Password has been reset successfully';
     res.redirect('/login');
 });
 
-app.get('/forgotPassword', (req,res) => {
+app.get('/forgotPassword', (req, res) => {
     res.render("forgotPassword");
 });
 
-app.get('/createUser', (req,res) => {
-	res.render("createUser");
-   });
+app.get('/createUser', (req, res) => {
+    res.render("createUser");
+});
 
-   
 
-app.post('/submitUser', async (req,res) => {
+
+
+app.get('/userType', (req, res) => {
+    res.render("userType");
+});
+
+
+app.get('/createOrganization', (req, res) => {
+    res.render("createOrganization");
+});
+
+app.post('/submitUser', async (req, res) => {
     var email = req.body.email;
     var username = req.body.username;
     var password = req.body.password;
 
-	const schema = Joi.object(
-		{
+    const schema = Joi.object(
+        {
             email: Joi.string().email().required(),
-			username: Joi.string().alphanum().max(20).required(),
-			password: Joi.string().max(20).required()
-		});
-	
-	const validationResult = schema.validate({email, username, password});
-	if (validationResult.error != null) {
-	   console.log(validationResult.error);
-	   res.redirect("/createUser");
-	   return;
-   }
+            username: Joi.string().alphanum().max(20).required(),
+            password: Joi.string().max(20).required()
+        });
+
+    const validationResult = schema.validate({ email, username, password });
+    if (validationResult.error != null) {
+        console.log(validationResult.error);
+        res.redirect("/createUser");
+        return;
+    }
 
     var hashedPassword = await bcrypt.hash(password, saltRounds);
-	
-	var result = await userCollection.insertOne({email: email, username: username, password: hashedPassword, user_type: "user"});
-	console.log("Inserted user");
+
+    var result = await userCollection.insertOne({ email: email, username: username, password: hashedPassword, user_type: "user" });
+    console.log("Inserted user");
 
     req.session.authenticated = true;
     req.session.username = result.username;
     //Tanner created req.session.userId = result.insertedId; with chatgpt: chat.openai.com
     req.session.userId = result.insertedId;
     req.session.cookiemaxAge = expireTime;
+    req.session.user_type = "user";
 
     res.redirect("/userProfileInfo");
 
 });
 
+app.post('/submitOrg', async (req, res) => {
+    var email = req.body.email;
+    var username = req.body.username;
+    var password = req.body.password;
+
+    const schema = Joi.object(
+        {
+            email: Joi.string().email().required(),
+            username: Joi.string().alphanum().max(20).required(),
+            password: Joi.string().max(20).required()
+        });
+
+    const validationResult = schema.validate({ email, username, password });
+    if (validationResult.error != null) {
+        console.log(validationResult.error);
+        res.redirect("/createOrganization");
+        return;
+    }
+
+    var hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    var result = await userCollection.insertOne({ email: email, username: username, password: hashedPassword, user_type: "org" });
+    console.log("Inserted Org");
+
+    req.session.authenticated = true;
+    req.session.username = result.username;
+    //Tanner created req.session.userId = result.insertedId; with chatgpt: chat.openai.com
+    req.session.userId = result.insertedId;
+    req.session.user_type = "org";
+    req.session.cookiemaxAge = expireTime;
+
+    res.redirect("/orgProfile");
+
+});
+
 app.post('/loggingin', async (req, res) => {
-    var email = req.body.email; 
+    var email = req.body.email;
     var password = req.body.password;
 
     const schema = Joi.object({
@@ -203,17 +512,17 @@ app.post('/loggingin', async (req, res) => {
         res.redirect("/login");
         return;
     }
-    const result = await userCollection.find({email: email}).project({username: 1, password: 1, user_type: 1, _id: 1}).toArray();
+    const result = await userCollection.find({ email: email }).project({ username: 1, password: 1, user_type: 1, _id: 1 }).toArray();
 
     // const result = await userCollection.findOne({ email });
 
     console.log(result);
 
-    if (result.length != 1) {
-		console.log("user not found");
-		res.redirect("/login");
-		return;
-	}
+    // if (result.length != 1) {
+    // 	console.log("user not found");
+    // 	res.redirect("/login");
+    // 	return;
+    // }
 
     if (!result) {
         req.session.errorMessage = 'Invalid email or password';
@@ -229,24 +538,23 @@ app.post('/loggingin', async (req, res) => {
         req.session.user_type = result[0].user_type;
         req.session.cookie.maxAge = expireTime;
 
-        res.redirect('/userProfileInfo');
+        if (req.session.user_type == 'org') {
+            res.redirect('/orgDashboard');
+        }
+        else {
+            res.redirect('/userDash');
+        }
     } else {
         req.session.errorMessage = 'Invalid email or password';
         res.redirect("/login");
     }
 });
-app.get('/loggedin', (req,res) => {
+app.get('/loggedin', (req, res) => {
     if (!req.session.authenticated) {
         res.redirect('/login');
     }
     res.render('test');
 });
-// Could be useful in the future
-// require('dotenv').config();
-// const session = require('express-session');
-// const Joi = require("joi");
-// const path = require('path');
-// ));
 
 app.get('/', (req, res) => {
     res.render('landing');
@@ -258,10 +566,10 @@ app.get('/map', (req, res) => {
 
 // Tanner Added userProfileInfo and userInformation
 // Used chatgpt to help include any previously user submited data. Chatgpt: chat.openai.com
-app.get('/userProfileInfo', async (req, res) => {
+app.get('/userProfileInfo', sessionValidation, userAuthorization, async (req, res) => {
     try {
         const userId = req.session.userId;
-        const user = await userCollection.findOne({ _id: new ObjectId(userId)});
+        const user = await userCollection.findOne({ _id: new ObjectId(userId) });
         res.render('userProfileInformation', { user });
     } catch (error) {
         console.error('Error:', error);
@@ -269,24 +577,85 @@ app.get('/userProfileInfo', async (req, res) => {
     }
 });
 
+app.get('/userProfilePicture/:userId', async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const user = await userCollection.findOne({ _id: new ObjectId(userId) });
+
+        // Check if the user exists and has a profile picture
+        if (user && user.profilePictureData) {
+            // Set the appropriate content type for the image
+            res.contentType('image/jpeg'); // Adjust the content type based on the image format
+
+            // Send the profile picture data as the response
+            res.send(user.profilePictureData.buffer); // Assuming profilePictureData is a Binary object
+        } else {
+            // If the user or profile picture data doesn't exist, send a default image or error message
+            res.sendFile(path.join(__dirname, 'images', 'default-profile-picture.png')); // Send default image
+            // Alternatively, you can send an error message
+            // res.status(404).send('Profile picture not found');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+
 // Used ChatGpt to help accept form submission and editing. Chatgpt: chat.openai.com
-app.post('/userInformation', async (req, res) => {
+app.post('/userInformation', upload.single('profilePicture'), async (req, res) => {
     try {
         const { firstName, lastName, email, address, city, province, postalCode, phone, DOB, age, gender, careCard, doctor, medHistory, medication, allergies } = req.body;
 
+        // Get the user ID from the session
         const userId = req.session.userId;
-        await userCollection.updateOne(
-            { _id:  new ObjectId(userId) },
-            { $set: { firstName, lastName, email, address, city, province, postalCode, phone, DOB, age, gender, careCard, doctor, medHistory, medication, allergies }
-        });
 
-        // Redirect the user to a success page or back to the profile page
+        // Create an object with the user information to update
+        const userInfoToUpdate = {
+            firstName,
+            lastName,
+            email,
+            address,
+            city,
+            province,
+            postalCode,
+            phone,
+            DOB,
+            age,
+            gender,
+            careCard,
+            doctor,
+            medHistory,
+            medication,
+            allergies
+        };
+
+        // Check if a profile picture was uploaded
+        if (req.file) {
+            // Read the file data
+            const profilePictureData = fs.readFileSync(req.file.path);
+
+            // Add the profile picture data to the user information object
+            userInfoToUpdate.profilePictureData = profilePictureData;
+
+            // Delete the temporary file uploaded by multer
+            fs.unlinkSync(req.file.path);
+        }
+
+        // Update the user document in the database with the user information
+        await userCollection.updateOne(
+            { _id: new ObjectId(userId) },
+            { $set: userInfoToUpdate }
+        );
+
+        // Redirect the user to the profile page
         res.redirect('/userProfileInfo');
     } catch (error) {
         console.error('Error:', error);
         res.status(500).send('Internal Server Error');
     }
-})
+});
+
 
 app.get('/logout', (req, res) => {
     req.session.destroy((err) => {
@@ -299,9 +668,134 @@ app.get('/logout', (req, res) => {
     });
 });
 
+// Added by Aathavan
+app.get('/userDroneTracking', (req, res) => {
+    res.render('userDroneTracking', {maps_api: maps_api_key}); 
+});
+
+app.get('/droneList', async (req, res) => {
+    try {
+        const drones = await droneCollection.find().toArray();
+        res.render('droneList', { drones: drones });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+
+app.get('/addDrone',  sessionValidation, orgAuthorization, (req, res) => {
+    res.render('addDrone');
+});
+app.post('/addingDrone', async (req, res) => {
+    var name = req.body.name;
+    var status = req.body.status;
+    var location = req.body.location;
+    var description = req.body.description;
+
+    const schema = Joi.object(
+        {
+            name: Joi.string().required(),
+            status: Joi.string().alphanum().max(20).required(),
+            location: Joi.string().max(20).required(),
+            description: Joi.string().required()
+        });
+
+    const validationResult = schema.validate({ name, status, location, description });
+    if (validationResult.error != null) {
+        console.log(validationResult.error);
+        res.redirect("/addDrone");
+        return;
+    }
+
+
+    var result = await droneCollection.insertOne({ name: name, status: status, location: location, description: description, user_type: "drone" });
+    console.log("Inserted drone");
+
+    // req.session.authenticated = true;
+    req.session.name = result.name;
+    //Tanner created req.session.userId = result.insertedId; with chatgpt: chat.openai.com
+    // req.session.userId = result.insertedId;
+    req.session.cookiemaxAge = expireTime;
+
+    res.redirect("/addDrone");
+})
+
+
+app.get('/addLocation',sessionValidation, orgAuthorization, (req, res) => {
+    res.render('addLocation');
+});
+
+app.post('/addingLocation', async (req, res) => {
+    var name = req.body.name;
+    var location = req.body.location;
+    var description = req.body.description;
+
+    const schema = Joi.object(
+        {
+            name: Joi.string().required(),
+            location: Joi.string().max(20).required(),
+            description: Joi.string().required()
+        });
+
+    const validationResult = schema.validate({ name, location, description });
+    if (validationResult.error != null) {
+        console.log(validationResult.error);
+        res.redirect("/addDrone");
+        return;
+    }
+
+
+    var result = await locationCollection.insertOne({ name: name, location: location, description: description, user_type: "Location" });
+    console.log("Inserted Location");
+
+    // req.session.authenticated = true;
+    req.session.name = result.name;
+    //Tanner created req.session.userId = result.insertedId; with chatgpt: chat.openai.com
+    // req.session.userId = result.insertedId;
+    req.session.cookiemaxAge = expireTime;
+
+    res.redirect("/addLocation");
+})
+
+// REMOVE AT END
+app.get('/test', (req, res) => {
+    res.render('test');
+});
+
+app.get('/orgDashboard', sessionValidation, orgAuthorization, (req, res) => {
+    res.render('orgDashboard');
+});
+
+app.get('/locationList', async (req, res) => {
+    try {
+        const locations = await locationCollection.find().toArray();
+        res.render('locationList', { locations: locations });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+app.get('/settings', (req, res) => {
+    const userType = req.session.user_type;
+    res.render('settings', {user_type: userType});
+});
+
+app.get('/contact', (req, res) => {
+    const userType = req.session.user_type;
+    res.render('contact', {user_type: userType})
+});
+
+app.get('/aboutUs', (req, res) => {
+    const userType = req.session.user_type;
+    res.render('aboutUs', {user_type: userType})
+});
+
+app.get('/redirect', (req, res) => {
+    res.render('redirect')
+})
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}/`);
 });
-
-

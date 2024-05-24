@@ -1,0 +1,89 @@
+<%- include('templates/headerAuthenticated') %>
+<head>
+    <title>Location List</title>
+    <style>
+        #x {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        a {
+            text-decoration: none;
+            color: #3498db;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .back-button {
+            background-color: #555555;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .back-button:hover {
+            background-color: #333333;
+        }
+        .back-button-container {
+            margin-top: 20px;
+            text-align: center; /* Center the content */
+        }
+    </style>
+</head>
+<br>
+<br>
+<body id="x">
+    <div class="container">
+        <h1>Location List</h1>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% locations.forEach(location => { %>
+                    <tr>
+                        <td><%= location.name %></td>
+                        <td><%= location.location %></td>
+                        <td><%= location.description %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+    <div class="back-button-container">
+        <button class="button back-button" onclick="window.history.back()">Back</button>
+    </div>
+<%- include('templates/footerAuthenticatedUser') %>

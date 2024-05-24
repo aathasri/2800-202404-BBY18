@@ -1,6 +1,8 @@
 body, html {
-    height: 100%;
+    height: 100vh;
     margin: 0;
+    width: 100vw;
+    
 }
 
 .wrapper {
@@ -16,4 +18,5 @@ body, html {
 footer {
     background-color: #0D4D60;
 }
+
 

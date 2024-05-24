@@ -1,0 +1,47 @@
+<%- include('templates/headerUnauthenticated') %>
+
+<style>
+    body, html {
+        height: 100%;
+        margin: 0;
+    }
+    .container {
+        display: flex;
+        flex-direction: column; /* Arrange elements vertically */
+        justify-content: center;
+        align-items: center;
+        height: 100%; /* Full height of the viewport */
+    }
+    .button-container {
+        text-align: center;
+    }
+    .button-container button {
+        margin: 5px;
+        padding: 10px 22px; /* Three times bigger padding */
+        font-size: 40px; /* Three times bigger font size */
+        border: none;
+        cursor: pointer;
+        background-color: #3498db; /* Blue */
+        color: white;
+        border-radius: 5px;
+        transition: background-color 0.3s; /* Smooth transition */
+    }
+    .button-container button:hover {
+        background-color: #a51c0d; /* Red */
+    }
+    h2 {
+        margin-bottom: 20px; /* Add some space between text and buttons */
+    }
+</style>
+<body>
+<div class="container">
+    <h2>How will you be using Asclepius?</h2>
+    Please select one
+    <div class="button-container">
+        <button id="button1" onclick="window.location.href='/createUser'">Individual User</button>
+        <button id="button2" onclick="window.location.href='/createOrganization'">Organization</button>
+    </div>
+</div>
+</body>
+
+<%- include('templates/footerUnauthenticated') %>

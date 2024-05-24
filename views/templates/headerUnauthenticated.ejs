@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asclepius</title>
+
+    <!-- Link to Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Link to your custom CSS file -->
+    <link rel="stylesheet" href="/index.css">
+    <!--Google sign in api-->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+</head>
+<body>
+
+<!-- Header -->
+<nav class="navbar navbar-expand-lg p-2">
+    <div class="container-fluid">
+        <!-- Branding -->
+        <a class="navbar-brand d-flex align-items-center" id="asclepiusBrand"  href="#/">
+            <img style="max-height: 2em; margin-right: 5px;" src="/logo.png" alt="Logo">
+            <h1 id="companyName" class="mb-0 text-light">Asclepius</h1>
+        </a>
+        <!--Logout Button -->
+        <div class="ml-auto">
+            <a href="/login" class="btn btn-outline-light">Login</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Page Contents -->
+<main>
+
+    
+        <script>
+            // Function to animate the drone
+            function flyDrone() {
+                // Create a new image element for the drone
+                const drone = document.createElement('img');
+                drone.src = '/bcf3a371b9303c27752e1109e96a2fe6.gif'; // Replace 'drone.gif' with the path to your drone animation
+                drone.classList.add('drone-img'); // Apply class to resize the image
+                drone.style.position = 'absolute';
+                drone.style.top = '50%';
+                drone.style.left = '-100px'; // Start the drone off-screen
+                document.body.appendChild(drone);
+    
+                // Animate the drone across the screen
+                const animation = drone.animate([
+                    { left: '-100px' }, // Start position
+                    { left: 'calc(100% + 100px)' } // End position
+                ], {
+                    duration: 5000, // Animation duration (5 seconds)
+                    easing: 'linear', // Linear easing
+                    iterations: 1, // Play the animation once
+                    fill: 'forwards' // Keep the final state of the animation
+                });
+    
+                // Remove the drone from the DOM after the animation completes
+                animation.onfinish = () => {
+                    drone.remove();
+                };
+            }
+    
+            // Event listener for clicks on the "Asclepius" navbar brand
+            let clickCount = 0;
+            document.getElementById('asclepiusBrand').addEventListener('click', () => {
+                clickCount++;
+                if (clickCount === 3) {
+                    flyDrone(); // Trigger the drone animation on the third click
+                    clickCount = 0; // Reset click count
+                }
+            });
+            
+        </script>
