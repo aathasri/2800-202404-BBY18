@@ -19,3 +19,8 @@ footer {
     background-color: #0D4D60;
 }
 
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+    /* Optionally, add other styles to visually indicate disabled state */
+}

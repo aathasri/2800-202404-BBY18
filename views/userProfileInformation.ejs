@@ -11,12 +11,12 @@
         </div>
 </div>
 <div>
-    <form id="userInfo" action="/userInformation" method="post" enctype="multipart/form-data">
+    <form  id="userInfo" action="/userInformation" method="post" enctype="multipart/form-data">
         <div class="row justify-content-center">
             <div class="col-md-4">
                 <!-- Move the button here -->
                 <label for="profilePictureInput" class="btn btn-primary position-relative mt-2">Change Profile Picture</label>
-                <input type="file" accept="image/*" name="profilePicture" id="profilePictureInput" style="display: none;">
+                <input type="file" accept="image/*" name="profilePicture" id="profilePictureInput" style="display: none;" displayed>
                 </div>
             </div>
         </div>
@@ -106,7 +106,7 @@
         <div class="row">
             <div class="col-md-12">
                 <label for="userMedHistory" class="form-label">Past Medical History</label>
-                <textarea name="medHistory" type="text" class="form-control" id="userMedHistory" rows="3" disabled><%= user && user.medHistory || '' %></textarea>
+                <textarea name="medHistory" type="text" class="form-control" id="userMedHistory" rows="3" disabled ><%= user && user.medHistory || '' %></textarea>
             </div>
         </div>
 
@@ -115,13 +115,13 @@
             <div class="col-md-12">
                 <label for="userMedication" class="form-label">Medications</label>
                 <textarea name="medication" type="text" class="form-control" id="userMedication"
-                    placeholder="Medication Name: Dosage, #Times a day" rows="3" disabled><%= user && user.medication || '' %></textarea>
+                    placeholder="Medication Name: Dosage, #Times a day" rows="3" disabled ><%= user && user.medication || '' %></textarea>
             </div>
         </div>
 
         <!-- User's Allergies -->
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-12" disabled>
                 <label for="userAllergies" class="form-label">Allergies</label>
                 <textarea name="allergies" type="text" class="form-control" id="userAllergies"
                     placeholder="Allergy: Severity, Hospitalized or Intubated for this allergy previously?"
@@ -131,19 +131,39 @@
 
         <div class="col-md-3 mx-auto mt-3">
             <button type="button" class="btn btn-secondary" id="editButton" onclick="enableForm()">Edit</button>
-            <button type="submit" class="btn btn-primary" id="saveButton" disabled>Save</button>
+            <button type="submit" class="btn btn-primary" id="saveButton" disabled >Save</button>
         </div>
 </form>
 </div>
 
 <!-- Used chatgpt (chat.openai.com) to generate the enable form function to control the profile form with the edit button.  -->
 <script>
-    function enableForm() {
-        const form = document.getElementById('userInfo');
-        const inputs = form.querySelectorAll('input, select, textarea');
-        inputs.forEach(input => input.disabled = false);
-        document.getElementById('saveButton').disabled = false;
-    }
-</script>
 
+
+    function enableForm() {
+    const form = document.getElementById('userInfo');
+    const inputs = form.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => input.classList.remove('disabled'));
+    document.getElementById('saveButton').disabled = false;
+    document.getElementById('userAllergies').disabled = false;
+    document.getElementById('userMedHistory').disabled = false;
+    document.getElementById('userDoctor').disabled = false;
+    document.getElementById('userCareCard').disabled = false;
+    document.getElementById('userGender').disabled = false;
+    document.getElementById('userAge').disabled = false;
+    document.getElementById('userDOB').disabled = false;
+    document.getElementById('userPhone').disabled = false;
+    document.getElementById('userPostalCode').disabled = false;
+    document.getElementById('userProvince').disabled = false;
+    document.getElementById('userCity').disabled = false;
+    document.getElementById('userAddress').disabled = false;
+    document.getElementById('userEmail').disabled = false;
+    document.getElementById('userLastName').disabled = false;
+    document.getElementById('userFirstName').disabled = false;
+    document.getElementById('profilePictureInput').disabled = false;
+    document.getElementById('userMedication').disabled = false;
+
+}
+
+</script>
 <%- include("templates/footer") %> 
