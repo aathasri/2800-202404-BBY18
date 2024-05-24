@@ -1,0 +1,33 @@
+/* Customizing Bootstrap Colors */
+
+/* Redefining Bootstrap's default colors */
+:root {
+    --primary: #0081a7; /* Redefining primary color */
+    --secondary: #0D4D60; /* Redefining secondary color */
+    /* --success: #28a745; /* Redefining success color */
+    /* --info: #17a2b8; /* Redefining info color */
+    /* --warning: #ffc107; /* Redefining warning color */
+    --danger: #9A031E; /* Redefining danger color */
+    --light: #F8F8F8; /* Redefining light color */
+    --dark: #191923; /* Redefining dark color */
+  }
+  
+  /* Example: Changing the background color of the navbar */
+  .navbar {
+    background-color: var(--primary);
+  }
+
+  .navbar-toggler {
+    border-color: white; /* Set the border color to white */
+}
+  .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='white' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+  #companyName {
+    font-size: 1.5em;
+  }
+  .drone-img {
+    width: 250px; /* Adjust the width as needed */
+    height: auto;
+}

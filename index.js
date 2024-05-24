@@ -37,6 +37,7 @@ const droneCollection = database.db(mongodb_database).collection('drones');
 app.use(express.urlencoded({extended: false}));
 app.use(express.static(__dirname + "/images"));
 app.use(express.static(__dirname + "/views"));
+app.use(express.static(__dirname + "/css"));
 
 app.set('view engine', 'ejs');
 
@@ -479,6 +480,11 @@ app.post('/addingDrone', async (req, res) => {
     res.redirect("/addDrone");
 })
 
+// REMOVE AT END
+app.get('/test', (req, res) => {
+    res.render('test');
+});
+
 app.get('/orgDashboard', (req, res) => {
     res.render('orgDashboard');
 });
@@ -523,5 +529,3 @@ app.get('/orgDashboard', (req, res) => {
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}/`);
 });
-
-
