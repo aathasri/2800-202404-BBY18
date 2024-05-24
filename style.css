@@ -20,8 +20,3 @@ footer {
 }
 
 
-.disabled {
-    pointer-events: none;
-    opacity: 0.5;
-    /* Optionally, add other styles to visually indicate disabled state */
-}
