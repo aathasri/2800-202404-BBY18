@@ -489,7 +489,7 @@ app.post('/submitOrg', async (req, res) => {
     req.session.userId = result.insertedId;
     req.session.cookiemaxAge = expireTime;
 
-    res.redirect("/orgProfileInfo");
+    res.redirect("/orgProfile");
 
 });
 
