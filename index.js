@@ -12,6 +12,47 @@ const Joi = require("joi");
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const { ObjectId } = require('mongodb'); // Added by Tanner from Chatgpt: chat.openai.com to save user information from form and repopulate the form with previously entered values.
+const multer = require('multer');
+
+// Storage for uploaded files.
+const storage = multer.diskStorage( {
+    destination: function(req, file, cb) {
+    cb(null, path.join(__dirname, 'images')); // Destination folder.
+    },
+    filename: function(req, file, cb) {
+        cb(null, file.fieldname +'-' + Date.now() + path.extname(file.originalname)); // File name.
+    }
+});
+
+// Initialize multer upload middleware.
+const upload = multer({ storage: storage });
+
+// Route to handle file upload.
+app.post('/uploadProfilePicture', upload.single('profilePicture'), async (req, res) => {
+    try {
+        if (!req.file) {
+            res.status(400).send('No file uploaded');
+            return;
+        }
+
+        // File uploaded successfully, get the filename
+        const filename = req.file.filename;
+
+        // Update the user document in the database with the filename of the profile picture
+        const userId = req.session.userId; // Assuming you have a user ID stored in the session
+        await userCollection.updateOne({ _id: new ObjectId(userId) }, { $set: { profilePicture: filename } });
+
+        // Log to console
+        console.log(`Profile picture filename "${filename}" saved to MongoDB for user ID "${userId}"`);
+
+        res.send('File uploaded successfully');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+
 var AWS = require("aws-sdk");
 
 
@@ -482,23 +523,59 @@ app.get('/userProfileInfo', async (req, res) => {
 });
 
 // Used ChatGpt to help accept form submission and editing. Chatgpt: chat.openai.com
-app.post('/userInformation', async (req, res) => {
+app.post('/userInformation', upload.single('profilePicture'), async (req, res) => {
     try {
         const { firstName, lastName, email, address, city, province, postalCode, phone, DOB, age, gender, careCard, doctor, medHistory, medication, allergies } = req.body;
 
+        // Get the user ID from the session
         const userId = req.session.userId;
-        await userCollection.updateOne(
-            { _id:  new ObjectId(userId) },
-            { $set: { firstName, lastName, email, address, city, province, postalCode, phone, DOB, age, gender, careCard, doctor, medHistory, medication, allergies }
-        });
 
-        // Redirect the user to a success page or back to the profile page
+        // Create an object with the user information to update
+        const userInfoToUpdate = {
+            firstName,
+            lastName,
+            email,
+            address,
+            city,
+            province,
+            postalCode,
+            phone,
+            DOB,
+            age,
+            gender,
+            careCard,
+            doctor,
+            medHistory,
+            medication,
+            allergies
+        };
+
+        // Check if a profile picture was uploaded
+        if (req.file) {
+            // Read the file data
+            const profilePictureData = fs.readFileSync(req.file.path);
+
+            // Add the profile picture data to the user information object
+            userInfoToUpdate.profilePictureData = profilePictureData;
+
+            // Delete the temporary file uploaded by multer
+            fs.unlinkSync(req.file.path);
+        }
+
+        // Update the user document in the database with the user information
+        await userCollection.updateOne(
+            { _id: new ObjectId(userId) },
+            { $set: userInfoToUpdate }
+        );
+
+        // Redirect the user to the profile page
         res.redirect('/userProfileInfo');
     } catch (error) {
         console.error('Error:', error);
         res.status(500).send('Internal Server Error');
     }
-})
+});
+
 
 app.get('/logout', (req, res) => {
     req.session.destroy((err) => {
@@ -567,43 +644,6 @@ app.get('/test', (req, res) => {
 app.get('/orgDashboard', sessionValidation, orgAuthorization, (req, res) => {
     res.render('orgDashboard');
 });
-
-// import {v2 as cloudinary} from 'cloudinary';
-
-// (async function() {
-
-//     // Configuration
-//     cloudinary.config({ 
-//         cloud_name: CLOUDINARY_CLOUD_NAME, 
-//         api_key: CLOUDINARY_CLOUD_KEY, 
-//         api_secret:CLOUDINARY_CLOUD_SECRET // Click 'View Credentials' below to copy your API secret
-//     });
-    
-//     // Upload an image
-//     const uploadResult = await cloudinary.uploader.upload("https://res.cloudinary.com/demo/image/upload/getting-started/shoes.jpg", {
-//         public_id: "shoes"
-//     }).catch((error)=>{console.log(error)});
-    
-//     console.log(uploadResult);
-    
-//     // Optimize delivery by resizing and applying auto-format and auto-quality
-//     const optimizeUrl = cloudinary.url("shoes", {
-//         fetch_format: 'auto',
-//         quality: 'auto'
-//     });
-    
-//     console.log(optimizeUrl);
-    
-//     // Transform the image: auto-crop to square aspect_ratio
-//     const autoCropUrl = cloudinary.url("shoes", {
-//         crop: 'auto',
-//         gravity: 'auto',
-//         width: 500,
-//         height: 500,
-//     });
-    
-//     console.log(autoCropUrl);    
-// })();
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}/`);
