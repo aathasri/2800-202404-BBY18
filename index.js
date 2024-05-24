@@ -86,8 +86,27 @@ function orgAuthorization(req, res, next) {
     if (!isOrg(req)) {
         res.status(403);
         console.log('not authorized');
-        // res.render("errorMessage", {error: "Not Authorized"});
-        return;
+        res.render("errorMessage", {error: "Not Authorized"});
+        // return;
+    }
+    else {
+        next();
+    }
+}
+
+function isUser(req) {
+    if (req.session.user_type == 'user') {
+        return true;
+    }
+    return false;
+}
+
+function userAuthorization(req, res, next) {
+    if (!isUser(req)) {
+        res.status(403);
+        console.log('not authorized');
+        res.render("errorMessage", {error: "Not Authorized"});
+        // return;
     }
     else {
         next();
@@ -199,7 +218,7 @@ app.post('/orgInfo', async (req, res) => {
 
   //Put at top with other db collections
 
-  app.get('/userDash', async (req, res) => {
+  app.get('/userDash',  sessionValidation, userAuthorization, async (req, res) => {
       try {
           const userId = req.session.userId;
           const user = await userCollection.findOne({ _id: new ObjectId(userId)});
@@ -470,7 +489,7 @@ app.get('/map', (req, res) => {
 
 // Tanner Added userProfileInfo and userInformation
 // Used chatgpt to help include any previously user submited data. Chatgpt: chat.openai.com
-app.get('/userProfileInfo', async (req, res) => {
+app.get('/userProfileInfo', sessionValidation, userAuthorization, async (req, res) => {
     try {
         const userId = req.session.userId;
         const user = await userCollection.findOne({ _id: new ObjectId(userId)});
@@ -522,7 +541,7 @@ app.get('/droneList', async (req, res) => {
 });
 
 
-app.get('/addDrone', (req, res) => {
+app.get('/addDrone',  sessionValidation, orgAuthorization, (req, res) => {
     res.render('addDrone');
 });
 app.post('/addingDrone', async (req, res) => {
