@@ -43,12 +43,12 @@
     <h1>Redirect Page</h1>
     <div class="button-container">
         <a href="/droneList" class="button">Drone List</a>
-        <a href="/addDrone" class="button">Add Drone<br>(organization use only)</a>
+        <a href="/addDrone" class="button">Add Drone</a>
         <a href="/locationList" class="button">Location List</a>
-        <a href="/addLocation" class="button">Add Location<br>(organization use only)</a>
+        <a href="/addLocation" class="button">Add Location</a>
     </div>
     <div class="back-button-container">
         <button class="button back-button" onclick="window.history.back()">Back</button>
     </div>
 
-    <%- include('templates/footerAuthenticatedUser') %>
+    <%- include('templates/footerAuthenticatedOrg') %>
