@@ -34,6 +34,7 @@ const userCollection = database.db(mongodb_database).collection('users');
 app.use(express.urlencoded({extended: false}));
 app.use(express.static(__dirname + "/images"));
 app.use(express.static(__dirname + "/views"));
+app.use(express.static(__dirname + "/css"));
 
 app.set('view engine', 'ejs');
 
@@ -149,10 +150,6 @@ app.get('/forgotPassword', (req,res) => {
 app.get('/createUser', (req,res) => {
 	res.render("createUser");
    });
-
-
-
-   
 
 app.post('/submitUser', async (req,res) => {
     var email = req.body.email;
@@ -296,6 +293,11 @@ app.get('/logout', (req, res) => {
 });
 
 
+// REMOVE AT END
+app.get('/test', (req, res) => {
+    res.render('test');
+});
+
 app.get('/orgDashboard', (req, res) => {
     res.render('orgDashboard');
 });
@@ -303,5 +305,3 @@ app.get('/orgDashboard', (req, res) => {
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}/`);
 });
-
-
