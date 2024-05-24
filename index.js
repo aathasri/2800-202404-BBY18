@@ -52,8 +52,29 @@ app.post('/uploadProfilePicture', upload.single('profilePicture'), async (req, r
     }
 });
 
+const handleSuccessResponse = (response) => {
+    console.log(response.access_token)
+  }
+  
+  const handleErrorResponse = (response) => {
+    console.log(response)
+  }
+  
+  const signInWithGoogle = () => {
+    // create params
+    const params = {
+      client_id: 822365614592-fd7gaj776mruumefv8ncadfo89ok6nuv.apps.googleusercontent.com,
+      callback: handleSuccessResponse,
+      error_callback: handleErrorResponse,
+    }
+    
+    // create client
+    const client = window.google.accounts.oauth2.initTokenClient(params);
+    
+    // Request token
+    client.requestAccessToken();
+}
 
-var AWS = require('aws-sdk');
 
 const expireTime = 1 * 60 * 60 * 1000;
 
@@ -173,55 +194,6 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-AWS.config.region = 'us-west-1';
-
-function signinCallback(googleUser) {
-    var profile = googleUser.getBasicProfile();
-    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-    console.log('Name: ' + profile.getName());
-    console.log('Email: ' + profile.getEmail());
-
-    document.getElementById('userEmail').innerHTML = profile.getEmail();
-    // document.getElementById('profile-name').innerHTML = profile.getName(); 
-
-    AWS.config.credentials = new AWS.WebIdentityCredentials({
-        RoleArn: 'arn:aws:iam::975049925657:role/asclepius',
-        ProviderId: null, // this is null for Google
-        WebIdentityToken: googleUser.getAuthResponse().id_token
-    });
-
-    // Obtain AWS credentials
-    AWS.config.credentials.get(async function () {
-        // Access AWS resources here.
-        var accessKeyId = AWS.config.credentials.accessKeyId;
-        var secretAccessKey = AWS.config.credentials.secretAccessKey;
-        var sessionToken = AWS.config.credentials.sessionToken;
-
-        // Update the URL to point to "userProfileInformation" endpoint
-        const response = await fetch('http://localhost:3000/userProfileInfo', {
-            method: 'POST',
-            body: JSON.stringify({
-                'AccessKeyId': accessKeyId,
-                'SecretAccessKey': secretAccessKey,
-                'SessionToken': sessionToken,
-                'UserId': profile.getId(),
-                'UserName': profile.getName(),
-                'UserEmail': profile.getEmail()
-            }),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-
-        // Handle the response from the server
-        const myJson = await response.json(); //extract JSON from the http response
-        console.log(myJson);
-
-        // Optionally, redirect to the user profile information page if needed
-        // res.redirect("userProfileInformation");
-        window.location.href = '/userProfileInformation';
-    });
-}
 
 
 
