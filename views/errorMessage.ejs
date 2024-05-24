@@ -1,3 +1,29 @@
+<%- include('templates/headerUnauthenticated') %>
 
+<style>
+    /* Center the container vertically and horizontally */
+    .error-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; /* Set the height of the container to full viewport height */
+    }
+
+    .back-button {
+        margin-top: 20px;
+        background-color: #555555;
+    }
+
+    .back-button:hover {
+        background-color: #333333;
+    }
+</style>
+
+<div class="error-container">
     <h1 style='color:red'>Error!</h1>
     <div><%= error %> </div>
+    <button class="button back-button" onclick="window.history.back()">Back</button>
+</div>
+
+<%- include('templates/footerUnauthenticated') %>

@@ -697,7 +697,7 @@ app.post('/addingDrone', async (req, res) => {
 })
 
 
-app.get('/addLocation', (req, res) => {
+app.get('/addLocation',sessionValidation, orgAuthorization, (req, res) => {
     res.render('addLocation');
 });
 

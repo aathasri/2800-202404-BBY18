@@ -1,15 +1,21 @@
 <%- include('templates/headerAuthenticated') %>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=<%= maps_api %>&callback=initMap" async defer></script>
-    <script src="/maps.js" defer></script>
+<style>
+    /* Adjust the size of the map */
+    #map {
+        height: 300px; /* Set the height of the map */
+        width: 100%; /* Set the width of the map */
+    }
+</style>
 
-    <div class="card p-3 m-3">
-        <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-        </div>
-        <div class="ratio ratio-1x1">
-            <div id="map"></div>
-        </div>
+<script src="https://maps.googleapis.com/maps/api/js?key=<%= maps_api %>&callback=initMap" async defer></script>
+<script src="/maps.js" defer></script>
+
+<div class="card p-3 m-3">
+    <div class="card-body">
+        <h5 class="card-title">Current Drone Location: </h5>
     </div>
+    <div id="map"></div> <!-- Remove the ratio class -->
+</div>
 
 <%- include('templates/footerAuthenticatedUser') %>
