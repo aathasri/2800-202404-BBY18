@@ -53,7 +53,7 @@ app.post('/uploadProfilePicture', upload.single('profilePicture'), async (req, r
 });
 
 
-
+var AWS = require('aws-sdk');
 
 const expireTime = 1 * 60 * 60 * 1000;
 
@@ -569,6 +569,31 @@ app.get('/userProfileInfo', sessionValidation, userAuthorization, async (req, re
         res.status(500).send('Internal Server Error');
     }
 });
+
+app.get('/userProfilePicture/:userId', async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const user = await userCollection.findOne({ _id: new ObjectId(userId) });
+
+        // Check if the user exists and has a profile picture
+        if (user && user.profilePictureData) {
+            // Set the appropriate content type for the image
+            res.contentType('image/jpeg'); // Adjust the content type based on the image format
+
+            // Send the profile picture data as the response
+            res.send(user.profilePictureData.buffer); // Assuming profilePictureData is a Binary object
+        } else {
+            // If the user or profile picture data doesn't exist, send a default image or error message
+            res.sendFile(path.join(__dirname, 'images', 'default-profile-picture.png')); // Send default image
+            // Alternatively, you can send an error message
+            // res.status(404).send('Profile picture not found');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 
 // Used ChatGpt to help accept form submission and editing. Chatgpt: chat.openai.com
 app.post('/userInformation', upload.single('profilePicture'), async (req, res) => {
