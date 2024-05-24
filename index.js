@@ -669,7 +669,7 @@ app.post('/addingDrone', async (req, res) => {
 })
 
 
-app.get('/addLocation', (req, res) => {
+app.get('/addLocation',sessionValidation, orgAuthorization, (req, res) => {
     res.render('addLocation');
 });
 
@@ -725,15 +725,18 @@ app.get('/locationList', async (req, res) => {
 });
 
 app.get('/settings', (req, res) => {
-    res.render('settings')
+    const userType = req.session.user_type;
+    res.render('settings', {user_type: userType});
 });
 
 app.get('/contact', (req, res) => {
-    res.render('contact')
+    const userType = req.session.user_type;
+    res.render('contact', {user_type: userType})
 });
 
 app.get('/aboutUs', (req, res) => {
-    res.render('aboutUs')
+    const userType = req.session.user_type;
+    res.render('aboutUs', {user_type: userType})
 });
 
 app.get('/redirect', (req, res) => {
