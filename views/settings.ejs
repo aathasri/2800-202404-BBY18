@@ -2,5 +2,10 @@
 
 WIP
 
-
-<%- include("templates/footerAuthenticated") %>
+<% if (user_type == 'user') { %>
+    <%- include("templates/footerAuthenticatedUser") %>
+<% } else if (user_type == 'org') { %> 
+    <%- include("templates/footerAuthenticatedOrg") %>
+<% } else { %> 
+<%- include("templates/footerUnauthenticated") %>
+<% } %>
