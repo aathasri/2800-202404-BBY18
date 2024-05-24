@@ -536,7 +536,12 @@ app.post('/loggingin', async (req, res) => {
         req.session.user_type = result[0].user_type;
         req.session.cookie.maxAge = expireTime;
 
-        res.redirect('/userProfileInfo');
+        if (req.session.user_type == 'org') {
+            res.redirect('/orgDashboard');
+        }
+        else {
+            res.redirect('/userDash');
+        }
     } else {
         req.session.errorMessage = 'Invalid email or password';
         res.redirect("/login");
@@ -775,6 +780,18 @@ app.get('/locationList', async (req, res) => {
         console.error('Error:', error);
         res.status(500).send('Internal Server Error');
     }
+});
+
+app.get('/settings', (req, res) => {
+    res.render('settings')
+});
+
+app.get('/contact', (req, res) => {
+    res.render('contact')
+});
+
+app.get('/aboutUs', (req, res) => {
+    res.render('aboutUs')
 });
 
 app.get('/redirect', (req, res) => {
