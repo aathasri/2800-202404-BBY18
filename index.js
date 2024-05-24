@@ -15,12 +15,12 @@ const { ObjectId } = require('mongodb'); // Added by Tanner from Chatgpt: chat.o
 const multer = require('multer');
 
 // Storage for uploaded files.
-const storage = multer.diskStorage( {
-    destination: function(req, file, cb) {
-    cb(null, path.join(__dirname, 'images')); // Destination folder.
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, path.join(__dirname, 'images')); // Destination folder.
     },
-    filename: function(req, file, cb) {
-        cb(null, file.fieldname +'-' + Date.now() + path.extname(file.originalname)); // File name.
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname)); // File name.
     }
 });
 
@@ -56,7 +56,7 @@ app.post('/uploadProfilePicture', upload.single('profilePicture'), async (req, r
 var AWS = require("aws-sdk");
 
 
-const expireTime =  1 * 60 * 60 * 1000; 
+const expireTime = 1 * 60 * 60 * 1000;
 
 
 const mongodb_host = process.env.MONGODB_HOST;
@@ -70,15 +70,16 @@ const node_session_secret = process.env.NODE_SESSION_SECRET;
 const maps_api_key = process.env.MAPS_API;
 
 
-var {database} = require('./databaseConnection');
+var { database } = require('./databaseConnection');
 
 const emergencyCollection = database.db(mongodb_database).collection('emergency')
 const userCollection = database.db(mongodb_database).collection('users');
 const droneCollection = database.db(mongodb_database).collection('drones');
+const locationCollection = database.db(mongodb_database).collection('location');
 
 
 
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.static(__dirname + "/images"));
 app.use(express.static(__dirname + "/views"));
 app.use(express.static(__dirname + "/js"));
@@ -88,18 +89,18 @@ app.set('view engine', 'ejs');
 
 
 var mongoStore = MongoStore.create({
-	mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
-	crypto: {
-		secret: mongodb_session_secret
-	}
+    mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
+    crypto: {
+        secret: mongodb_session_secret
+    }
 })
 
-app.use(session({ 
+app.use(session({
     secret: node_session_secret,
-	store: mongoStore, 
-	saveUninitialized: false, 
-	resave: true,
-    cookie: {maxAge: expireTime }
+    store: mongoStore,
+    saveUninitialized: false,
+    resave: true,
+    cookie: { maxAge: expireTime }
 }
 ));
 
@@ -110,7 +111,7 @@ function isValidSession(req) {
     return false;
 }
 
-function sessionValidation(req,res,next) {
+function sessionValidation(req, res, next) {
     if (isValidSession(req)) {
         next();
     }
@@ -138,10 +139,10 @@ function orgAuthorization(req, res, next) {
     }
 }
 
-function requireAuth(req, res, next){
-    if (!req.session.authenticated){
+function requireAuth(req, res, next) {
+    if (!req.session.authenticated) {
         res.redirect('/');
-    }else {
+    } else {
         next();
     }
 }
@@ -154,62 +155,62 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-// AWS.config.region = 'us-west-1';
+AWS.config.region = 'us-west-1';
 
-// function signinCallback(googleUser) {
-//     var profile = googleUser.getBasicProfile();
-//     console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-//     console.log('Name: ' + profile.getName());
-//     console.log('Email: ' + profile.getEmail());
+function signinCallback(googleUser) {
+    var profile = googleUser.getBasicProfile();
+    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+    console.log('Name: ' + profile.getName());
+    console.log('Email: ' + profile.getEmail());
 
-//     document.getElementById('userEmail').innerHTML = profile.getEmail();
-//     // document.getElementById('profile-name').innerHTML = profile.getName(); 
+    document.getElementById('userEmail').innerHTML = profile.getEmail();
+    // document.getElementById('profile-name').innerHTML = profile.getName(); 
 
-//     AWS.config.credentials = new AWS.WebIdentityCredentials({
-//         RoleArn: 'arn:aws:iam::975049925657:role/asclepius',
-//         ProviderId: null, // this is null for Google
-//         WebIdentityToken: googleUser.getAuthResponse().id_token
-//     });
+    AWS.config.credentials = new AWS.WebIdentityCredentials({
+        RoleArn: 'arn:aws:iam::975049925657:role/asclepius',
+        ProviderId: null, // this is null for Google
+        WebIdentityToken: googleUser.getAuthResponse().id_token
+    });
 
-//     // Obtain AWS credentials
-//     AWS.config.credentials.get(async function(){
-//         // Access AWS resources here.
-//         var accessKeyId = AWS.config.credentials.accessKeyId;
-//         var secretAccessKey = AWS.config.credentials.secretAccessKey;
-//         var sessionToken = AWS.config.credentials.sessionToken;
+    // Obtain AWS credentials
+    AWS.config.credentials.get(async function () {
+        // Access AWS resources here.
+        var accessKeyId = AWS.config.credentials.accessKeyId;
+        var secretAccessKey = AWS.config.credentials.secretAccessKey;
+        var sessionToken = AWS.config.credentials.sessionToken;
 
-//         // Update the URL to point to "userProfileInformation" endpoint
-//         const response = await fetch('http://localhost:3000/userProfileInfo', {
-//             method: 'POST',
-//             body: JSON.stringify({
-//                 'AccessKeyId': accessKeyId,
-//                 'SecretAccessKey': secretAccessKey,
-//                 'SessionToken': sessionToken,
-//                 'UserId': profile.getId(),
-//                 'UserName': profile.getName(),
-//                 'UserEmail': profile.getEmail()
-//             }),
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             }
-//         });
+        // Update the URL to point to "userProfileInformation" endpoint
+        const response = await fetch('http://localhost:3000/userProfileInfo', {
+            method: 'POST',
+            body: JSON.stringify({
+                'AccessKeyId': accessKeyId,
+                'SecretAccessKey': secretAccessKey,
+                'SessionToken': sessionToken,
+                'UserId': profile.getId(),
+                'UserName': profile.getName(),
+                'UserEmail': profile.getEmail()
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
 
-//         // Handle the response from the server
-//         const myJson = await response.json(); //extract JSON from the http response
-//         console.log(myJson);
+        // Handle the response from the server
+        const myJson = await response.json(); //extract JSON from the http response
+        console.log(myJson);
 
-//         // Optionally, redirect to the user profile information page if needed
-//         // res.redirect("userProfileInformation");
-//             window.location.href = '/userProfileInformation';
-//     });
-// }
+        // Optionally, redirect to the user profile information page if needed
+        // res.redirect("userProfileInformation");
+        window.location.href = '/userProfileInformation';
+    });
+}
 
 
 
 app.get('/orgProfile', sessionValidation, orgAuthorization, async (req, res) => {
     try {
         const orgId = req.session.userId;
-        const org = await userCollection.findOne({ _id: new ObjectId(orgId)});
+        const org = await userCollection.findOne({ _id: new ObjectId(orgId) });
         res.render('orgProfile', { org });
     } catch (error) {
         console.error('Error:', error);
@@ -229,9 +230,10 @@ app.post('/orgInfo', async (req, res) => {
 
         const orgId = req.session.userId;
         await userCollection.updateOne(
-            { _id:  new ObjectId(orgId) },
-            { $set: { orgName, orgJurisdiction, orgEmail, orgAddress, orgCity, orgProvince, orgPostalCode, orgPhone, orgFounded, orgAbout }
-        });
+            { _id: new ObjectId(orgId) },
+            {
+                $set: { orgName, orgJurisdiction, orgEmail, orgAddress, orgCity, orgProvince, orgPostalCode, orgPhone, orgFounded, orgAbout }
+            });
 
         // Redirect the org back to the profile page
         res.redirect('/orgProfile');
@@ -241,48 +243,48 @@ app.post('/orgInfo', async (req, res) => {
     }
 });
 
-  //Put at top with other db collections
+//Put at top with other db collections
 
-  app.get('/userDash', async (req, res) => {
-      try {
-          const userId = req.session.userId;
-          const user = await userCollection.findOne({ _id: new ObjectId(userId)});
-          res.render('userDash', { user });
-      } catch (error) {
-          console.error('Error:', error);
-          res.status(500).send('Internal Server Error');
-      }
-  });
-  
-  
-  // Used ChatGpt to help accept form submission and editing. Chatgpt: chat.openai.com
-  app.post('/callForHelp', async (req, res) => {
-      try {
-  
-          // Used gpt to figure out how to create a timestamp.
-          const timeStamp = new Date();
-          const formattedTimestamp = timeStamp.toLocaleString();
-  
-          // Gets the user's information
-          const userId = req.session.userId;
-          const user = await userCollection.findOne({ _id: new ObjectId(userId)});
-  
-          //Take relevant information from user and provide to org.
-          await emergencyCollection.insertOne({userId: req.session.userId, username: req.session.username, location: "" , time: formattedTimestamp, status: "active"  })
-  
-  
-          // Redirect the org back to the profile page
-          res.redirect('/userDroneTracking');
-      } catch (error) {
-          console.error('Error:', error);
-          res.status(500).send('Internal Server Error');
-      }
-  });
+app.get('/userDash', async (req, res) => {
+    try {
+        const userId = req.session.userId;
+        const user = await userCollection.findOne({ _id: new ObjectId(userId) });
+        res.render('userDash', { user });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
 
-app.get('/login', (req,res) => {
+
+// Used ChatGpt to help accept form submission and editing. Chatgpt: chat.openai.com
+app.post('/callForHelp', async (req, res) => {
+    try {
+
+        // Used gpt to figure out how to create a timestamp.
+        const timeStamp = new Date();
+        const formattedTimestamp = timeStamp.toLocaleString();
+
+        // Gets the user's information
+        const userId = req.session.userId;
+        const user = await userCollection.findOne({ _id: new ObjectId(userId) });
+
+        //Take relevant information from user and provide to org.
+        await emergencyCollection.insertOne({ userId: req.session.userId, username: req.session.username, location: "", time: formattedTimestamp, status: "active" })
+
+
+        // Redirect the org back to the profile page
+        res.redirect('/userDroneTracking');
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+app.get('/login', (req, res) => {
     var errorMessage = req.session.errorMessage || '';
     req.session.errorMessage = '';
-    res.render("login", {errorMessage: errorMessage});
+    res.render("login", { errorMessage: errorMessage });
 
 });
 
@@ -360,49 +362,49 @@ app.post('/reset/:token', async (req, res) => {
     res.redirect('/login');
 });
 
-app.get('/forgotPassword', (req,res) => {
+app.get('/forgotPassword', (req, res) => {
     res.render("forgotPassword");
 });
 
-app.get('/createUser', (req,res) => {
-	res.render("createUser");
-   });
+app.get('/createUser', (req, res) => {
+    res.render("createUser");
+});
 
 
 
-   
-app.get('/userType', (req,res) => {
-	res.render("userType");
-   });
 
-      
-app.get('/createOrganization', (req,res) => {
-	res.render("createOrganization");
-   });
+app.get('/userType', (req, res) => {
+    res.render("userType");
+});
 
-app.post('/submitUser', async (req,res) => {
+
+app.get('/createOrganization', (req, res) => {
+    res.render("createOrganization");
+});
+
+app.post('/submitUser', async (req, res) => {
     var email = req.body.email;
     var username = req.body.username;
     var password = req.body.password;
 
-	const schema = Joi.object(
-		{
+    const schema = Joi.object(
+        {
             email: Joi.string().email().required(),
-			username: Joi.string().alphanum().max(20).required(),
-			password: Joi.string().max(20).required()
-		});
-	
-	const validationResult = schema.validate({email, username, password});
-	if (validationResult.error != null) {
-	   console.log(validationResult.error);
-	   res.redirect("/createUser");
-	   return;
-   }
+            username: Joi.string().alphanum().max(20).required(),
+            password: Joi.string().max(20).required()
+        });
+
+    const validationResult = schema.validate({ email, username, password });
+    if (validationResult.error != null) {
+        console.log(validationResult.error);
+        res.redirect("/createUser");
+        return;
+    }
 
     var hashedPassword = await bcrypt.hash(password, saltRounds);
-	
-	var result = await userCollection.insertOne({email: email, username: username, password: hashedPassword, user_type: "user"});
-	console.log("Inserted user");
+
+    var result = await userCollection.insertOne({ email: email, username: username, password: hashedPassword, user_type: "user" });
+    console.log("Inserted user");
 
     req.session.authenticated = true;
     req.session.username = result.username;
@@ -414,29 +416,29 @@ app.post('/submitUser', async (req,res) => {
 
 });
 
-app.post('/submitOrg', async (req,res) => {
+app.post('/submitOrg', async (req, res) => {
     var email = req.body.email;
     var username = req.body.username;
     var password = req.body.password;
 
-	const schema = Joi.object(
-		{
+    const schema = Joi.object(
+        {
             email: Joi.string().email().required(),
-			username: Joi.string().alphanum().max(20).required(),
-			password: Joi.string().max(20).required()
-		});
-	
-	const validationResult = schema.validate({email, username, password});
-	if (validationResult.error != null) {
-	   console.log(validationResult.error);
-	   res.redirect("/createOrganization");
-	   return;
-   }
+            username: Joi.string().alphanum().max(20).required(),
+            password: Joi.string().max(20).required()
+        });
+
+    const validationResult = schema.validate({ email, username, password });
+    if (validationResult.error != null) {
+        console.log(validationResult.error);
+        res.redirect("/createOrganization");
+        return;
+    }
 
     var hashedPassword = await bcrypt.hash(password, saltRounds);
-	
-	var result = await userCollection.insertOne({email: email, username: username, password: hashedPassword, user_type: "org"});
-	console.log("Inserted Org");
+
+    var result = await userCollection.insertOne({ email: email, username: username, password: hashedPassword, user_type: "org" });
+    console.log("Inserted Org");
 
     req.session.authenticated = true;
     req.session.username = result.username;
@@ -449,7 +451,7 @@ app.post('/submitOrg', async (req,res) => {
 });
 
 app.post('/loggingin', async (req, res) => {
-    var email = req.body.email; 
+    var email = req.body.email;
     var password = req.body.password;
 
     const schema = Joi.object({
@@ -465,17 +467,17 @@ app.post('/loggingin', async (req, res) => {
         res.redirect("/login");
         return;
     }
-    const result = await userCollection.find({email: email}).project({username: 1, password: 1, user_type: 1, _id: 1}).toArray();
+    const result = await userCollection.find({ email: email }).project({ username: 1, password: 1, user_type: 1, _id: 1 }).toArray();
 
     // const result = await userCollection.findOne({ email });
 
     console.log(result);
 
     // if (result.length != 1) {
-	// 	console.log("user not found");
-	// 	res.redirect("/login");
-	// 	return;
-	// }
+    // 	console.log("user not found");
+    // 	res.redirect("/login");
+    // 	return;
+    // }
 
     if (!result) {
         req.session.errorMessage = 'Invalid email or password';
@@ -497,7 +499,7 @@ app.post('/loggingin', async (req, res) => {
         res.redirect("/login");
     }
 });
-app.get('/loggedin', (req,res) => {
+app.get('/loggedin', (req, res) => {
     if (!req.session.authenticated) {
         res.redirect('/login');
     }
@@ -517,7 +519,7 @@ app.get('/map', (req, res) => {
 app.get('/userProfileInfo', async (req, res) => {
     try {
         const userId = req.session.userId;
-        const user = await userCollection.findOne({ _id: new ObjectId(userId)});
+        const user = await userCollection.findOne({ _id: new ObjectId(userId) });
         res.render('userProfileInformation', { user });
     } catch (error) {
         console.error('Error:', error);
@@ -623,24 +625,24 @@ app.post('/addingDrone', async (req, res) => {
     var location = req.body.location;
     var description = req.body.description;
 
-	const schema = Joi.object(
-		{
+    const schema = Joi.object(
+        {
             name: Joi.string().required(),
-			status: Joi.string().alphanum().max(20).required(),
-			location: Joi.string().max(20).required(),
-            description : Joi.string().required()
-		});
-	
-	const validationResult = schema.validate({name, status, location, description});
-	if (validationResult.error != null) {
-	   console.log(validationResult.error);
-	   res.redirect("/addDrone");
-	   return;
-   }
+            status: Joi.string().alphanum().max(20).required(),
+            location: Joi.string().max(20).required(),
+            description: Joi.string().required()
+        });
 
-	
-	var result = await droneCollection.insertOne({name: name, status: status, location: location, description: description, user_type: "drone"});
-	console.log("Inserted drone");
+    const validationResult = schema.validate({ name, status, location, description });
+    if (validationResult.error != null) {
+        console.log(validationResult.error);
+        res.redirect("/addDrone");
+        return;
+    }
+
+
+    var result = await droneCollection.insertOne({ name: name, status: status, location: location, description: description, user_type: "drone" });
+    console.log("Inserted drone");
 
     // req.session.authenticated = true;
     req.session.name = result.name;
@@ -651,6 +653,43 @@ app.post('/addingDrone', async (req, res) => {
     res.redirect("/addDrone");
 })
 
+
+app.get('/addLocation', (req, res) => {
+    res.render('addLocation');
+});
+
+app.post('/addingLocation', async (req, res) => {
+    var name = req.body.name;
+    var location = req.body.location;
+    var description = req.body.description;
+
+    const schema = Joi.object(
+        {
+            name: Joi.string().required(),
+            location: Joi.string().max(20).required(),
+            description: Joi.string().required()
+        });
+
+    const validationResult = schema.validate({ name, location, description });
+    if (validationResult.error != null) {
+        console.log(validationResult.error);
+        res.redirect("/addDrone");
+        return;
+    }
+
+
+    var result = await locationCollection.insertOne({ name: name, location: location, description: description, user_type: "Location" });
+    console.log("Inserted Location");
+
+    // req.session.authenticated = true;
+    req.session.name = result.name;
+    //Tanner created req.session.userId = result.insertedId; with chatgpt: chat.openai.com
+    // req.session.userId = result.insertedId;
+    req.session.cookiemaxAge = expireTime;
+
+    res.redirect("/addLocation");
+})
+
 // REMOVE AT END
 app.get('/test', (req, res) => {
     res.render('test');
@@ -659,6 +698,20 @@ app.get('/test', (req, res) => {
 app.get('/orgDashboard', sessionValidation, orgAuthorization, (req, res) => {
     res.render('orgDashboard');
 });
+
+app.get('/locationList', async (req, res) => {
+    try {
+        const locations = await locationCollection.find().toArray();
+        res.render('locationList', { locations: locations });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+app.get('/redirect', (req, res) => {
+    res.render('redirect')
+})
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}/`);
