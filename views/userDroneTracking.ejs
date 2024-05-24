@@ -7,9 +7,14 @@
         <div class="card-body">
             <h5 class="card-title">Drones Near You</h5>
         </div>
-        <div id="mapContainer">
-            <div id="map"></div>
+        <div id="mapContainer" >
+            <div id="map" class="rounded"></div>
         </div>
     </div>
+
+    <div class="d-grid gap-2 px-3">
+        <a href="/locationList" class="btn btn-primary btn-lg" type="button">Location List</a>
+        <a href="/droneList" class="btn btn-secondary btn-lg" type="button">Drone List</a>
+      </div>
 
 <%- include('templates/footerAuthenticatedUser') %>
