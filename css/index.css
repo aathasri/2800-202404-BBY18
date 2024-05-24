@@ -27,3 +27,7 @@
   #companyName {
     font-size: 1.5em;
   }
+  .drone-img {
+    width: 250px; /* Adjust the width as needed */
+    height: auto;
+}
