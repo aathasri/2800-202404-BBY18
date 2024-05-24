@@ -53,7 +53,6 @@ app.post('/uploadProfilePicture', upload.single('profilePicture'), async (req, r
 });
 
 
-var AWS = require("aws-sdk");
 
 
 const expireTime = 1 * 60 * 60 * 1000;
@@ -174,6 +173,8 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+<<<<<<< HEAD
+=======
 AWS.config.region = 'us-west-1';
 
 function signinCallback(googleUser) {
@@ -225,6 +226,7 @@ function signinCallback(googleUser) {
 }
 
 
+>>>>>>> fecc0644814f5b4d58917c15d80e6f2b336fcf6b
 
 app.get('/orgProfile', sessionValidation, orgAuthorization, async (req, res) => {
     try {
@@ -264,6 +266,7 @@ app.post('/orgInfo', async (req, res) => {
 
 //Put at top with other db collections
 
+<<<<<<< HEAD
   app.get('/userDash',  sessionValidation, userAuthorization, async (req, res) => {
       try {
           const userId = req.session.userId;
@@ -299,6 +302,43 @@ app.post('/orgInfo', async (req, res) => {
           res.status(500).send('Internal Server Error');
       }
   });
+=======
+app.get('/userDash', async (req, res) => {
+    try {
+        const userId = req.session.userId;
+        const user = await userCollection.findOne({ _id: new ObjectId(userId) });
+        res.render('userDash', { user });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+>>>>>>> fecc0644814f5b4d58917c15d80e6f2b336fcf6b
+
+
+// Used ChatGpt to help accept form submission and editing. Chatgpt: chat.openai.com
+app.post('/callForHelp', async (req, res) => {
+    try {
+
+        // Used gpt to figure out how to create a timestamp.
+        const timeStamp = new Date();
+        const formattedTimestamp = timeStamp.toLocaleString();
+
+        // Gets the user's information
+        const userId = req.session.userId;
+        const user = await userCollection.findOne({ _id: new ObjectId(userId) });
+
+        //Take relevant information from user and provide to org.
+        await emergencyCollection.insertOne({ userId: req.session.userId, username: req.session.username, location: "", time: formattedTimestamp, status: "active" })
+
+
+        // Redirect the org back to the profile page
+        res.redirect('/userDroneTracking');
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
 
 app.get('/login', (req, res) => {
     var errorMessage = req.session.errorMessage || '';
