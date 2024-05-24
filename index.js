@@ -429,7 +429,7 @@ app.post('/submitUser', async (req, res) => {
     //Tanner created req.session.userId = result.insertedId; with chatgpt: chat.openai.com
     req.session.userId = result.insertedId;
     req.session.cookiemaxAge = expireTime;
-    req.session.user_type = result.user_type;
+    req.session.user_type = "user";
 
     res.redirect("/userProfileInfo");
 
@@ -463,7 +463,7 @@ app.post('/submitOrg', async (req, res) => {
     req.session.username = result.username;
     //Tanner created req.session.userId = result.insertedId; with chatgpt: chat.openai.com
     req.session.userId = result.insertedId;
-    req.session.user_type = result.user_type;
+    req.session.user_type = "org";
     req.session.cookiemaxAge = expireTime;
 
     res.redirect("/orgProfile");
