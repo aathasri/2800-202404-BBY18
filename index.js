@@ -67,6 +67,8 @@ const mongodb_session_secret = process.env.MONGODB_SESSION_SECRET;
 
 const node_session_secret = process.env.NODE_SESSION_SECRET;
 
+const maps_api_key = process.env.MAPS_API;
+
 
 var {database} = require('./databaseConnection');
 
@@ -79,6 +81,7 @@ const droneCollection = database.db(mongodb_database).collection('drones');
 app.use(express.urlencoded({extended: false}));
 app.use(express.static(__dirname + "/images"));
 app.use(express.static(__dirname + "/views"));
+app.use(express.static(__dirname + "/js"));
 app.use(express.static(__dirname + "/css"));
 
 app.set('view engine', 'ejs');
@@ -586,6 +589,18 @@ app.get('/logout', (req, res) => {
         }
         res.redirect('/login');
     });
+});
+
+
+// Added by Aathavan
+app.get('/userDroneTracking', (req, res) => {
+    res.render('userDroneTracking', {maps_api: maps_api_key}); 
+});
+
+
+// Added by Aathavan
+app.get('/userDroneTracking', (req, res) => {
+    res.render('userDroneTracking', {maps_api: maps_api_key}); 
 });
 
 app.get('/droneList', async (req, res) => {
