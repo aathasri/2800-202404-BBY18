@@ -53,7 +53,6 @@ app.post('/uploadProfilePicture', upload.single('profilePicture'), async (req, r
 });
 
 
-var AWS = require("aws-sdk");
 
 
 const expireTime = 1 * 60 * 60 * 1000;
@@ -131,8 +130,27 @@ function orgAuthorization(req, res, next) {
     if (!isOrg(req)) {
         res.status(403);
         console.log('not authorized');
-        // res.render("errorMessage", {error: "Not Authorized"});
-        return;
+        res.render("errorMessage", {error: "Not Authorized"});
+        // return;
+    }
+    else {
+        next();
+    }
+}
+
+function isUser(req) {
+    if (req.session.user_type == 'user') {
+        return true;
+    }
+    return false;
+}
+
+function userAuthorization(req, res, next) {
+    if (!isUser(req)) {
+        res.status(403);
+        console.log('not authorized');
+        res.render("errorMessage", {error: "Not Authorized"});
+        // return;
     }
     else {
         next();
@@ -245,16 +263,41 @@ app.post('/orgInfo', async (req, res) => {
 
 //Put at top with other db collections
 
-app.get('/userDash', async (req, res) => {
-    try {
-        const userId = req.session.userId;
-        const user = await userCollection.findOne({ _id: new ObjectId(userId) });
-        res.render('userDash', { user });
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).send('Internal Server Error');
-    }
-});
+  app.get('/userDash',  sessionValidation, userAuthorization, async (req, res) => {
+      try {
+          const userId = req.session.userId;
+          const user = await userCollection.findOne({ _id: new ObjectId(userId)});
+          res.render('userDash', { user });
+      } catch (error) {
+          console.error('Error:', error);
+          res.status(500).send('Internal Server Error');
+      }
+  });
+  
+  
+  // Used ChatGpt to help accept form submission and editing. Chatgpt: chat.openai.com
+  app.post('/callForHelp', async (req, res) => {
+      try {
+  
+          // Used gpt to figure out how to create a timestamp.
+          const timeStamp = new Date();
+          const formattedTimestamp = timeStamp.toLocaleString();
+  
+          // Gets the user's information
+          const userId = req.session.userId;
+          const user = await userCollection.findOne({ _id: new ObjectId(userId)});
+  
+          //Take relevant information from user and provide to org.
+          await emergencyCollection.insertOne({userId: req.session.userId, username: req.session.username, location: "" , time: formattedTimestamp, status: "active"  })
+  
+  
+          // Redirect the org back to the profile page
+          res.redirect('/userDroneTracking');
+      } catch (error) {
+          console.error('Error:', error);
+          res.status(500).send('Internal Server Error');
+      }
+  });
 
 
 // Used ChatGpt to help accept form submission and editing. Chatgpt: chat.openai.com
@@ -516,7 +559,7 @@ app.get('/map', (req, res) => {
 
 // Tanner Added userProfileInfo and userInformation
 // Used chatgpt to help include any previously user submited data. Chatgpt: chat.openai.com
-app.get('/userProfileInfo', async (req, res) => {
+app.get('/userProfileInfo', sessionValidation, userAuthorization, async (req, res) => {
     try {
         const userId = req.session.userId;
         const user = await userCollection.findOne({ _id: new ObjectId(userId) });
@@ -616,7 +659,7 @@ app.get('/droneList', async (req, res) => {
 });
 
 
-app.get('/addDrone', (req, res) => {
+app.get('/addDrone',  sessionValidation, orgAuthorization, (req, res) => {
     res.render('addDrone');
 });
 app.post('/addingDrone', async (req, res) => {
