@@ -299,31 +299,6 @@ app.post('/orgInfo', async (req, res) => {
       }
   });
 
-
-// Used ChatGpt to help accept form submission and editing. Chatgpt: chat.openai.com
-app.post('/callForHelp', async (req, res) => {
-    try {
-
-        // Used gpt to figure out how to create a timestamp.
-        const timeStamp = new Date();
-        const formattedTimestamp = timeStamp.toLocaleString();
-
-        // Gets the user's information
-        const userId = req.session.userId;
-        const user = await userCollection.findOne({ _id: new ObjectId(userId) });
-
-        //Take relevant information from user and provide to org.
-        await emergencyCollection.insertOne({ userId: req.session.userId, username: req.session.username, location: "", time: formattedTimestamp, status: "active" })
-
-
-        // Redirect the org back to the profile page
-        res.redirect('/userDroneTracking');
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).send('Internal Server Error');
-    }
-});
-
 app.get('/login', (req, res) => {
     var errorMessage = req.session.errorMessage || '';
     req.session.errorMessage = '';
@@ -665,13 +640,6 @@ app.get('/logout', (req, res) => {
         res.redirect('/login');
     });
 });
-
-
-// Added by Aathavan
-app.get('/userDroneTracking', (req, res) => {
-    res.render('userDroneTracking', {maps_api: maps_api_key}); 
-});
-
 
 // Added by Aathavan
 app.get('/userDroneTracking', (req, res) => {
