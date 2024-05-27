@@ -33,6 +33,7 @@
         <div class="mb-3">
             <label for="password" class="form-label">Password</label>
             <input name='password' type='password' class="form-control" id="password" placeholder='Password' required>
+            <input type="checkbox" id="showPassword"> Show Password
             <div class="invalid-feedback">
                 Please enter a password.
             </div>
@@ -62,7 +63,16 @@
             })
     })()
 </script>
-
+<script>
+    document.getElementById('showPassword').addEventListener('change', function() {
+        const passwordInput = document.getElementById('password');
+        if (this.checked) {
+            passwordInput.type = 'text';
+        } else {
+            passwordInput.type = 'password';
+        }
+    });
+</script>
 </body>
 </html>
 

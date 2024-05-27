@@ -20,6 +20,7 @@
             <div class="form-group">
               <label for="password">Password</label>
               <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password">
+              <input type="checkbox" id="showPassword"> Show Password
             </div>
             <br>
             <button type="submit" class="btn btn-primary">Submit</button>
@@ -28,5 +29,14 @@
         </div>
       </div>
     </div>  
-
+    <script>
+      document.getElementById('showPassword').addEventListener('change', function() {
+          const passwordInput = document.getElementById('password');
+          if (this.checked) {
+              passwordInput.type = 'text';
+          } else {
+              passwordInput.type = 'password';
+          }
+      });
+  </script>
 <%- include('templates/footerUnauthenticated') %>
