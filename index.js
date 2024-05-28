@@ -287,7 +287,7 @@ app.get('/orgProfilePicture/:userId', async (req, res) => {
           const user = await userCollection.findOne({ _id: new ObjectId(userId)});
   
           //Take relevant information from user and provide to org.
-          await emergencyCollection.insertOne({userId: req.session.userId, username: req.session.username, location: "" , time: formattedTimestamp, status: "active"  })
+          await emergencyCollection.insertOne({userId: req.session.userId, username: user.username, location: "" , time: formattedTimestamp, status: "requested"  })
   
   
           // Redirect the org back to the profile page
@@ -737,9 +737,48 @@ app.get('/test', (req, res) => {
     res.render('test');
 });
 
-app.get('/orgDashboard', sessionValidation, orgAuthorization, (req, res) => {
-    res.render('orgDashboard');
+app.get('/orgDashboard', sessionValidation, orgAuthorization, async (req, res) => {
+    try {
+        const requestedEmergencies = await emergencyCollection.find({ status: 'requested' }).toArray();
+        const activeEmergencies = await emergencyCollection.find({ status: 'active' }).toArray();
+        const completeEmergencies = await emergencyCollection.find({ status: 'complete' }).toArray();
+
+        res.render('orgDashboard', { requestedEmergencies, activeEmergencies, completeEmergencies });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Internal Server Error');
+    }
 });
+
+app.post('/updateEmergencyStatus', sessionValidation, orgAuthorization, async (req, res) => {
+    const { emergencyId, newStatus } = req.body;
+    try {
+        await emergencyCollection.updateOne(
+            { _id: new ObjectId(emergencyId) },
+            { $set: { status: newStatus } }
+        );
+        res.redirect('/orgDashboard');
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+app.post('/toggleEmergencyStatus', sessionValidation, orgAuthorization, async (req, res) => {
+    const { emergencyId, newStatus } = req.body;
+    try {
+        await emergencyCollection.updateOne(
+            { _id: new ObjectId(emergencyId) },
+            { $set: { status: newStatus } }
+        );
+        res.redirect('/orgDashboard');
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+
 
 app.get('/locationList', async (req, res) => {
     try {
