@@ -313,7 +313,7 @@ app.get('/orgProfilePicture/:userId', async (req, res) => {
           const user = await userCollection.findOne({ _id: new ObjectId(userId)});
   
           //Take relevant information from user and provide to org.
-          await emergencyCollection.insertOne({userId: req.session.userId, username: req.session.username, location: "" , time: formattedTimestamp, status: "active"  })
+          await emergencyCollection.insertOne({userId: req.session.userId, username: user.userId, location: "" , time: formattedTimestamp, status: "requested"  })
   
   
           // Redirect the org back to the profile page
@@ -766,13 +766,10 @@ app.get('/test', (req, res) => {
 app.get('/orgDashboard', sessionValidation, orgAuthorization, async (req, res) => {
     try {
         const requestedEmergencies = await emergencyCollection.find({ status: 'requested' }).toArray();
-
         const activeEmergencies = await emergencyCollection.find({ status: 'active' }).toArray();
-
         const completeEmergencies = await emergencyCollection.find({ status: 'complete' }).toArray();
 
-        res.render('orgDashboard', { requestedEmergencies: requestedEmergencies, activeEmergencies: activeEmergencies, completeEmergencies: completeEmergencies });
-        
+        res.render('orgDashboard', { requestedEmergencies, activeEmergencies, completeEmergencies });
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error');
