@@ -34,12 +34,15 @@
         <div class="col-12 col-md-6 mb-4">
             <div class="card">
                 <div class="card-header bg-dark text-white">
-                    <h4 class="mb-0 text-center">Emergency Requests</h4>
+                    <h4 class="mb-0 text-center">Requested Emergencies</h4>
                 </div>
+                
+                <% requestedEmergencies.slice(0,3).forEach( rem => { %>
                 <div class="card-body d-flex justify-content-between align-items-center">
-                    <strong class="mb-0">Case 1</strong>
+                    <strong class="mb-0"><%= rem.username%></strong>
                     <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#emergencyModal">View More</button>
                 </div>
+                <% }); %>
             </div>
         </div>
         
@@ -47,12 +50,16 @@
         <div class="col-12 col-md-6 mb-4">
             <div class="card">
                 <div class="card-header bg-dark text-white">
-                    <h4 class="mb-0 text-center">Ongoing Emergencies</h4>
+                    <h4 class="mb-0 text-center">Active Emergencies</h4>
                 </div>
+                
+                
+                <% activeEmergencies.slice(0,3).forEach( aem => { %>
                 <div class="card-body d-flex justify-content-between align-items-center">
-                    <strong class="mb-0">Case 1</strong>
+                    <strong class="mb-0"><%= aem.username%></strong>
                     <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#ongoingModal">View More</button>
                 </div>
+                <% }); %>
             </div>
         </div>
     </div>
@@ -64,38 +71,13 @@
                 <div class="card-header bg-dark text-white">
                     <h4 class="mb-0 text-center">Completed Emergencies</h4>
                 </div>
+                
+                    <% completeEmergencies.slice(0,3).forEach(cem => { %>
                 <div class="card-body d-flex justify-content-between align-items-center">
-                    <strong class="mb-0">Case 1</strong>
+                    <strong class="mb-0"><%= cem.username%></strong>
                     <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#completedModal">View More</button>
                 </div>
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <strong class="mb-0">Case 1</strong>
-                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#completedModal">View More</button>
-                </div>
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <strong class="mb-0">Case 1</strong>
-                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#completedModal">View More</button>
-                </div>
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <strong class="mb-0">Case 1</strong>
-                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#completedModal">View More</button>
-                </div>
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <strong class="mb-0">Case 1</strong>
-                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#completedModal">View More</button>
-                </div>
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <strong class="mb-0">Case 1</strong>
-                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#completedModal">View More</button>
-                </div>
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <strong class="mb-0">Case 1</strong>
-                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#completedModal">View More</button>
-                </div>
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <strong class="mb-0">Case 1</strong>
-                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#completedModal">View More</button>
-                </div>
+                <% }); %>
             </div>
         </div>
     </div>

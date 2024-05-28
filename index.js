@@ -763,8 +763,20 @@ app.get('/test', (req, res) => {
     res.render('test');
 });
 
-app.get('/orgDashboard', sessionValidation, orgAuthorization, (req, res) => {
-    res.render('orgDashboard');
+app.get('/orgDashboard', sessionValidation, orgAuthorization, async (req, res) => {
+    try {
+        const requestedEmergencies = await emergencyCollection.find({ status: 'requested' }).toArray();
+
+        const activeEmergencies = await emergencyCollection.find({ status: 'active' }).toArray();
+
+        const completeEmergencies = await emergencyCollection.find({ status: 'complete' }).toArray();
+
+        res.render('orgDashboard', { requestedEmergencies: requestedEmergencies, activeEmergencies: activeEmergencies, completeEmergencies: completeEmergencies });
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 app.get('/locationList', async (req, res) => {
