@@ -294,7 +294,7 @@ app.get('/orgProfilePicture/:userId', async (req, res) => {
           const user = await userCollection.findOne({ _id: new ObjectId(userId)});
   
           //Take relevant information from user and provide to org.
-          await emergencyCollection.insertOne({userId: req.session.userId, username: user.userId, location: "" , time: formattedTimestamp, status: "requested"  })
+          await emergencyCollection.insertOne({userId: req.session.userId, username: user.username, location: "" , time: formattedTimestamp, status: "requested"  })
   
   
           // Redirect the org back to the profile page
