@@ -24,6 +24,8 @@ const storage = multer.diskStorage({
     }
 });
 
+
+
 // Initialize multer upload middleware.
 const upload = multer({ storage: storage });
 
@@ -52,28 +54,6 @@ app.post('/uploadProfilePicture', upload.single('profilePicture'), async (req, r
     }
 });
 
-const handleSuccessResponse = (response) => {
-    console.log(response.access_token)
-  }
-  
-  const handleErrorResponse = (response) => {
-    console.log(response)
-  }
-  
-  const signInWithGoogle = () => {
-    // create params
-    const params = {
-      client_id: 822365614592-fd7gaj776mruumefv8ncadfo89ok6nuv.apps.googleusercontent.com,
-      callback: handleSuccessResponse,
-      error_callback: handleErrorResponse,
-    }
-    
-    // create client
-    const client = window.google.accounts.oauth2.initTokenClient(params);
-    
-    // Request token
-    client.requestAccessToken();
-}
 
 
 const expireTime = 1 * 60 * 60 * 1000;
@@ -104,6 +84,7 @@ app.use(express.static(__dirname + "/images"));
 app.use(express.static(__dirname + "/views"));
 app.use(express.static(__dirname + "/js"));
 app.use(express.static(__dirname + "/css"));
+app.use(express.static(__dirname + "/animations"));
 
 app.set('view engine', 'ejs');
 
@@ -451,7 +432,7 @@ app.post('/submitUser', async (req, res) => {
 
     req.session.authenticated = true;
     req.session.username = result.username;
-    //Tanner created req.session.userId = result.insertedId; with chatgpt: chat.openai.com
+    //Tanner created req.session.userId = result.insertedId; with chatgpt (chat.openai.com)
     req.session.userId = result.insertedId;
     req.session.cookiemaxAge = expireTime;
     req.session.user_type = "user";
@@ -803,6 +784,11 @@ app.get('/aboutUs', (req, res) => {
 
 app.get('/redirect', (req, res) => {
     res.render('redirect')
+})
+
+app.get('*', (req, res) => {
+    const userType = req.session.user_type;
+    res.render('404', {user_type: userType})
 })
 
 app.listen(port, () => {
