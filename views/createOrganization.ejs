@@ -32,8 +32,10 @@
         </div>
         <div class="mb-3">
             <label for="password" class="form-label">Password</label>
-            <input name='password' type='password' class="form-control" id="password" placeholder='Password' required>
-            <input type="checkbox" id="showPassword"> Show Password
+            <div class="password-wrapper">
+                <input name='password' type='password' class="form-control" id="password" placeholder='Password' required>
+               Show Password<span class="eye-icon" id="togglePassword">&#128065;</span>
+            </div>
             <div class="invalid-feedback">
                 Please enter a password.
             </div>
@@ -73,6 +75,16 @@
         }
     });
 </script>
+<script>
+    document.getElementById('togglePassword').addEventListener('click', function () {
+        const passwordInput = document.getElementById('password');
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+    
+        // Toggle the eye icon between eye and eye with slash
+        this.textContent = type === 'password' ? '\u{1F441}' : '\u{1F441}\u{200D}\u{1F5E8}';
+    });
+    </script>
 </body>
 </html>
 

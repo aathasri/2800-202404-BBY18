@@ -47,28 +47,6 @@ app.post('/uploadProfilePicture', upload.single('profilePicture'), async (req, r
     }
 });
 
-const handleSuccessResponse = (response) => {
-    console.log(response.access_token)
-  }
-  
-  const handleErrorResponse = (response) => {
-    console.log(response)
-  }
-  
-  const signInWithGoogle = () => {
-    // create params
-    const params = {
-      client_id: 822365614592-fd7gaj776mruumefv8ncadfo89ok6nuv.apps.googleusercontent.com,
-      callback: handleSuccessResponse,
-      error_callback: handleErrorResponse,
-    }
-    
-    // create client
-    const client = window.google.accounts.oauth2.initTokenClient(params);
-    
-    // Request token
-    client.requestAccessToken();
-}
 
 
 const expireTime = 1 * 60 * 60 * 1000;

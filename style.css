@@ -19,7 +19,25 @@ footer {
     background-color: #0D4D60;
 }
 
-
-#showPassword {
-    margin-top: 10px;
+.password-wrapper {
+    position: relative;
 }
+
+.form-control {
+    padding-right: 40px; /* Ensure there's space for the eye icon */
+    width: 100%;
+}
+
+.eye-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    user-select: none;
+    color: gray; /* Make the eye icon gray */
+    font-size: 1.2em; /* Adjust size as needed */
+}
+
+
+
