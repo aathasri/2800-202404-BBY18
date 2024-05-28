@@ -1,5 +1,69 @@
 <%- include("templates/headerAuthenticated") %> 
 
+<style>
+    /* Checkmark Animation Styles */
+    .checkmark-container {
+        width: 100px;
+        height: 100px;
+        display: inline-block;
+    }
+
+    .checkmark {
+        width: 100px;
+        height: 100px;
+        display: block;
+        stroke-width: 2;
+        stroke: #4caf50;
+        stroke-miterlimit: 10;
+        box-shadow: inset 0px 0px 0px #4caf50;
+    }
+
+    .checkmark__circle {
+        stroke-dasharray: 166;
+        stroke-dashoffset: 166;
+        stroke-width: 2;
+        stroke-miterlimit: 10;
+        stroke: #4caf50;
+        fill: none;
+        animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    }
+
+    .checkmark__check {
+        transform-origin: 50% 50%;
+        stroke-dasharray: 48;
+        stroke-dashoffset: 48;
+        animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.4s forwards;
+    }
+
+    @keyframes stroke {
+        100% {
+            stroke-dashoffset: 0;
+        }
+    }
+
+    @keyframes scale {
+        0%, 100% {
+            transform: none;
+        }
+        50% {
+            transform: scale3d(1.1, 1.1, 1);
+        }
+    }
+
+    @keyframes fill {
+        100% {
+            box-shadow: inset 0px 0px 0px 30px #4caf50;
+        }
+    }
+
+    /* Center the modal content */
+    .modal-dialog-centered {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+
 <div class="px-4 py-5 my-5 text-center">
     <h1 class="display-5 fw-bold text-body-emphasis">Welcome, <%= user.username %> to Asclepius</h1>
     <div class="col-lg-6 mx-auto">
@@ -30,25 +94,24 @@
     </div>
 </div>
 
-<!-- Confirmation Modal -->
-<div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<!-- Checkmark Animation Modal -->
+<div class="modal fade" id="checkmarkAnimationModal" tabindex="-1" role="dialog" aria-labelledby="checkmarkAnimationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Your call for help has been sent successfully.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            <div class="modal-body text-center">
+                <div class="checkmark-container">
+                    <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                        <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                        <path class="checkmark__check" fill="none" d="M14 27l10 10 18-18"/>
+                    </svg>
+                </div>
+                <p class="mt-3">Request Sent</p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Eventlisteners created by chatgpt (chat.openai.com) -->
+<!-- Event listeners created by ChatGPT (chat.openai.com) -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('confirmCallForHelp').addEventListener('click', function () {
@@ -56,12 +119,13 @@
             var callForHelpModal = new bootstrap.Modal(document.getElementById('callForHelpModal'));
             callForHelpModal.hide();
 
-            // Show the confirmation modal
-            var confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
-            confirmationModal.show();
+            // Show the checkmark animation modal
+            var checkmarkAnimationModal = new bootstrap.Modal(document.getElementById('checkmarkAnimationModal'));
+            checkmarkAnimationModal.show();
 
-            // After the confirmation modal closes, submit the form
-            document.getElementById('confirmationModal').addEventListener('hidden.bs.modal', function () {
+            // Listen for the end of the CSS animation
+            var checkmark = document.querySelector('.checkmark');
+            checkmark.addEventListener('animationend', function () {
                 document.getElementById('callForHelpForm').submit();
             }, { once: true });
         });

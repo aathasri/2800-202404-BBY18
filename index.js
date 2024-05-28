@@ -24,6 +24,8 @@ const storage = multer.diskStorage({
     }
 });
 
+
+
 // Initialize multer upload middleware.
 const upload = multer({ storage: storage });
 
@@ -104,6 +106,7 @@ app.use(express.static(__dirname + "/images"));
 app.use(express.static(__dirname + "/views"));
 app.use(express.static(__dirname + "/js"));
 app.use(express.static(__dirname + "/css"));
+app.use(express.static(__dirname + "/animations"));
 
 app.set('view engine', 'ejs');
 
