@@ -454,7 +454,7 @@ app.post('/submitUser', async (req, res) => {
 
     req.session.authenticated = true;
     req.session.username = result.username;
-    //Tanner created req.session.userId = result.insertedId; with chatgpt: chat.openai.com
+    //Tanner created req.session.userId = result.insertedId; with chatgpt (chat.openai.com)
     req.session.userId = result.insertedId;
     req.session.cookiemaxAge = expireTime;
     req.session.user_type = "user";
@@ -797,6 +797,11 @@ app.get('/aboutUs', (req, res) => {
 
 app.get('/redirect', (req, res) => {
     res.render('redirect')
+})
+
+app.get('*', (req, res) => {
+    const userType = req.session.user_type;
+    res.render('404', {user_type: userType})
 })
 
 app.listen(port, () => {
