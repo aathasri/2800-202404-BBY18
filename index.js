@@ -757,6 +757,36 @@ app.get('/orgDashboard', sessionValidation, orgAuthorization, async (req, res) =
     }
 });
 
+app.post('/updateEmergencyStatus', sessionValidation, orgAuthorization, async (req, res) => {
+    const { emergencyId, newStatus } = req.body;
+    try {
+        await emergencyCollection.updateOne(
+            { _id: new ObjectId(emergencyId) },
+            { $set: { status: newStatus } }
+        );
+        res.redirect('/orgDashboard');
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+app.post('/toggleEmergencyStatus', sessionValidation, orgAuthorization, async (req, res) => {
+    const { emergencyId, newStatus } = req.body;
+    try {
+        await emergencyCollection.updateOne(
+            { _id: new ObjectId(emergencyId) },
+            { $set: { status: newStatus } }
+        );
+        res.redirect('/orgDashboard');
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+
+
 app.get('/locationList', async (req, res) => {
     try {
         const locations = await locationCollection.find().toArray();
