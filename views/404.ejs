@@ -1,0 +1,32 @@
+<% if (user_type=='user' || user_type=='org' ) { %>
+    <%- include("templates/headerAuthenticated") %>
+        <% } else { %>
+            <%- include("templates/headerUnauthenticated") %>
+                <% } %>
+
+
+                    <div class="px-4 py-5 my-5 text-center">
+                        <h1 class="display-5 fw-bold text-body-emphasis">404</h1>
+                        <div class="col-lg-6 mx-auto">
+                            <p class="lead mb-4">The page requested was not found.</p>
+                            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                                <!-- Got the conditionals and buttons using chatgpt (chat.openai.com) -->
+                                <% if (user_type == 'user') { %>
+                                    <a href="/userDash" class="btn btn-primary btn-lg px-4 gap-3">Back to Dashboard</a>
+                                  <% } else if (user_type == 'org') { %>
+                                    <a href="/orgDashboard" class="btn btn-primary btn-lg px-4 gap-3">Back to Dashboard</a>
+                                  <% } else { %>
+                                    <a href="/" class="btn btn-primary btn-lg px-4 gap-3">Back to Home</a>
+                                  <% } %>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <% if (user_type=='user' ) { %>
+                        <%- include("templates/footerAuthenticatedUser") %>
+                            <% } else if (user_type=='org' ) { %>
+                                <%- include("templates/footerAuthenticatedOrg") %>
+                                    <% } else { %>
+                                        <%- include("templates/footerUnauthenticated") %>
+                                            <% } %>
