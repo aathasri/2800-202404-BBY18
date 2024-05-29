@@ -748,7 +748,7 @@ app.get('/orgDashboard', sessionValidation, orgAuthorization, async (req, res) =
             requestedEmergencies, 
             activeEmergencies, 
             completeEmergencies,
-            dronesInventoryCount, // Pass the drones count to the template
+            dronesInventoryCount, 
             drones
         });
     } catch (error) {
@@ -759,15 +759,13 @@ app.get('/orgDashboard', sessionValidation, orgAuthorization, async (req, res) =
 
 
 app.post('/updateEmergencyStatus', sessionValidation, orgAuthorization, async (req, res) => {
-    const { emergencyId, droneId } = req.body; // Also get the selected drone ID
+    const { emergencyId, droneId } = req.body; 
     try {
-        // Update the emergency status to 'active'
         await emergencyCollection.updateOne(
             { _id: new ObjectId(emergencyId) },
             { $set: { status: 'active', assignedDrone: new ObjectId(droneId) } }
         );
 
-        // Mark the selected drone as 'active'
         await droneCollection.updateOne(
             { _id: new ObjectId(droneId) },
             { $set: { status: 'active' } }

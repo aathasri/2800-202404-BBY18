@@ -40,10 +40,30 @@ Used chatgpt: chat.openai.com
 - Generated the conditional statements in the value for each field to populate with previously entered information.
 - Generated the enable form function to control the profile form with the edit button. 
 
+Hugo Amuan:
+1. File: index.js
+Used ChatGPT: chat.openai.com
+- npm multer used to handle file uploads for profile picture. 
+- npm bcrypt to generate tokens for email password reset
+- Retrieval of images after decrypting to hex format in mongoDB
+
+2. File: orgDashboard.ejs
+Used ChatGPT: chat.openai.com
+- Syntax issues such as missing , {} ; () => . 
+- Logic errors
+- Bootstrap simplification/fixing
+
+3. userProfileInformation.ejs
+Used ChatGPT: chat.openai.com
+- Helped with retrieval of images for profile picture from mongoDB.
+
+4. orgProfile.ejs
+Used ChatGPT: chat.openai.com
+- Helped with retrieval of images for profile picture from mongoDB.
 
 
 Mitchell MacDonald:
-Hugo Amuan:
+
 Gurshaan Daula
 Aathavan Sriharan
 
