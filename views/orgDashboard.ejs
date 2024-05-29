@@ -94,105 +94,102 @@
                 </div>
 
     <!-- Emergency Modals -->
-    <% requestedEmergencies.concat(activeEmergencies).concat(completeEmergencies).forEach(em => { %>
-        <div class="modal fade" id="emergencyModal<%= em._id %>" tabindex="-1" role="dialog" aria-labelledby="emergencyModalLabel<%= em._id %>" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header bg-dark text-white">
-                        <h5 class="modal-title" id="emergencyModalLabel<%= em._id %>">Emergency Information</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <ul>
-                            <li><strong>User ID:</strong> <%= em.userId %></li>
-                            <li><strong>Emergency ID:</strong> <%= em._id %></li>
-                            <li><strong>Username: </strong><%= em.username %></strong></li>
-                            <li><strong>Location:</strong> <%= em.location %></li>
-                            <li><strong>Timestamp:</strong> <%= em.time %></li>
-                            <li><strong>Status:</strong> <%= em.status %></li>
-                        </ul>
-                        <% if (em.status === 'requested') { %>
-                            <form action="/updateEmergencyStatus" method="POST">
-                                <input type="hidden" name="emergencyId" value="<%= em._id %>">
-                                <input type="hidden" name="newStatus" value="active">
-                                <button type="submit" class="btn btn-success">Accept</button>
-                            </form>
-                        <% } %>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
+   <!-- Emergency Modals -->
+<% requestedEmergencies.concat(activeEmergencies).concat(completeEmergencies).forEach(em => { %>
+    <div class="modal fade" id="emergencyModal<%= em._id %>" tabindex="-1" role="dialog" aria-labelledby="emergencyModalLabel<%= em._id %>" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="emergencyModalLabel<%= em._id %>">Emergency Information</h5>
                 </div>
-            </div>
-        </div>
-    <% }); %>
-
-    <!-- Active Emergency Modals -->
-    <% activeEmergencies.forEach(aem => { %>
-        <div class="modal fade" id="activeModal<%= aem._id %>" tabindex="-1" role="dialog" aria-labelledby="activeModalLabel<%= aem._id %>" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header bg-dark text-white">
-                        <h5 class="modal-title" id="activeModalLabel<%= aem._id %>">Ongoing Emergency Information</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <ul>
-                            <li><strong>User ID:</strong> <%= aem.userId %></li>
-                            <li><strong>Emergency ID:</strong> <%= aem._id %></li>
-                            <li><strong>Username: </strong><%= aem.username %></strong></li>
-                            <li><strong>Location:</strong> <%= aem.location %></li>
-                            <li><strong>Timestamp:</strong> <%= aem.time %></li>
-                            <li><strong>Status:</strong> <%= aem.status %></li>
-                        </ul>
-                        <form action="/toggleEmergencyStatus" method="POST">
-                            <input type="hidden" name="emergencyId" value="<%= aem._id %>">
-                            <input type="hidden" name="newStatus" value="complete">
-                            <button type="submit" class="btn btn-success">Complete</button>
+                <div class="modal-body">
+                    <ul>
+                        <li><strong>User ID:</strong> <%= em.userId %></li>
+                        <li><strong>Emergency ID:</strong> <%= em._id %></li>
+                        <li><strong>Username: </strong><%= em.username %></strong></li>
+                        <li><strong>Location:</strong> <%= em.location %></li>
+                        <li><strong>Timestamp:</strong> <%= em.time %></li>
+                        <li><strong>Status:</strong> <%= em.status %></li>
+                    </ul>
+                    <% if (em.status === 'requested') { %>
+                        <form action="/updateEmergencyStatus" method="POST">
+                            <input type="hidden" name="emergencyId" value="<%= em._id %>">
+                            <!-- Add a dropdown to select an inactive drone -->
+                            <select name="droneId">
+                                <% drones.forEach(drone => { %>
+                                    <% if (drone.status === 'inactive') { %>
+                                        <option value="<%= drone._id %>"><%= drone.name %></option>
+                                    <% } %>
+                                <% }); %>
+                            </select>
+                            <button type="submit" class="btn btn-success">Accept</button>
                         </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
+                    <% } %>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
-    <% }); %>
+    </div>
+<% }); %>
 
-    <!-- Completed Modal -->
-    <% completeEmergencies.forEach(cem => { %>
-        <div class="modal fade" id="completedModal<%= cem._id %>" tabindex="-1" role="dialog" aria-labelledby="completedModalLabel<%= cem._id %>" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header bg-dark text-white">
-                        <h5 class="modal-title" id="completedModalLabel<%= cem._id %>">Completed Emergency Information</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <ul>
-                            <li><strong>User ID:</strong> <%= cem.userId %></li>
-                            <li><strong>Emergency ID:</strong> <%= cem._id %></li>
-                            <li><strong>Username: </strong><%= cem.username %></strong></li>
-                            <li><strong>Location:</strong> <%= cem.location %></li>
-                            <li><strong>Timestamp:</strong> <%= cem.time %></li>
-                            <li><strong>Status:</strong> <%= cem.status %></li>
-                        </ul>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
+<!-- Active Emergency Modals -->
+<% activeEmergencies.forEach(aem => { %>
+    <div class="modal fade" id="activeModal<%= aem._id %>" tabindex="-1" role="dialog" aria-labelledby="activeModalLabel<%= aem._id %>" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="activeModalLabel<%= aem._id %>">Ongoing Emergency Information</h5>
+                </div>
+                <div class="modal-body">
+                    <ul>
+                        <li><strong>User ID:</strong> <%= aem.userId %></li>
+                        <li><strong>Emergency ID:</strong> <%= aem._id %></li>
+                        <li><strong>Username: </strong><%= aem.username %></strong></li>
+                        <li><strong>Location:</strong> <%= aem.location %></li>
+                        <li><strong>Timestamp:</strong> <%= aem.time %></li>
+                        <li><strong>Status:</strong> <%= aem.status %></li>
+                    </ul>
+                    <form action="/toggleEmergencyStatus" method="POST">
+                        <input type="hidden" name="emergencyId" value="<%= aem._id %>">
+                        <input type="hidden" name="newStatus" value="complete">
+                        <button type="submit" class="btn btn-success">Complete</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
-    <% }); %>
-</div>
+    </div>
+<% }); %>
 
+<!-- Completed Modal -->
+<% completeEmergencies.forEach(cem => { %>
+    <div class="modal fade" id="completedModal<%= cem._id %>" tabindex="-1" role="dialog" aria-labelledby="completedModalLabel<%= cem._id %>" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="completedModalLabel<%= cem._id %>">Completed Emergency Information</h5>
+                </div>
+                <div class="modal-body">
+                    <ul>
+                        <li><strong>User ID:</strong> <%= cem.userId %></li>
+                        <li><strong>Emergency ID:</strong> <%= cem._id %></li>
+                        <li><strong>Username: </strong><%= cem.username %></strong></li>
+                        <li><strong>Location:</strong> <%= cem.location %></li>
+                        <li><strong>Timestamp:</strong> <%= cem.time %></li>
+                        <li><strong>Status:</strong> <%= cem.status %></li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<% }); %>
 
 
 <%- include("templates/footerAuthenticatedOrg") %>
