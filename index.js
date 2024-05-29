@@ -191,7 +191,7 @@ app.post('/orgInfo', upload.single('profilePicture'), async (req, res) => {
     }
 
     try {
-        const { orgName, orgJurisdiction, orgEmail, orgAddress, orgCity, orgProvince, orgPostalCode, orgPhone, orgFounded, orgAbout } = req.body;
+        const { orgName, orgJurisdiction, orgEmail, orgAddress, orgCity, orgProvince, orgPostalCode, orgPhone, orgFounded } = req.body;
 
         const userId = req.session.userId;
 
@@ -204,8 +204,7 @@ app.post('/orgInfo', upload.single('profilePicture'), async (req, res) => {
             orgProvince,
             orgPostalCode,
             orgPhone,
-            orgFounded,
-            orgAbout
+            orgFounded
         };
 
         if (req.file) {

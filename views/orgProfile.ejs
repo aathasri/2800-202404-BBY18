@@ -75,14 +75,6 @@
         </div>
     </div>
 
-    <!-- Org's Writeup -->
-    <div class="row">
-        <div class="col-md-12">
-            <label for="orgAbout" class="form-label">About us</label>
-            <textarea name="orgAbout" type="text" class="form-control" id="orgAbout" rows="3" disabled><%= user && user.orgAbout || '' %></textarea>
-        </div>
-    </div>
-
     <div class="col-md-3 mx-auto mt-3">
         <button type="button" class="btn btn-secondary" id="editButton" onclick="enableForm()">Edit</button>
         <button type="submit" class="btn btn-primary" id="saveButton" disabled>Save</button>
