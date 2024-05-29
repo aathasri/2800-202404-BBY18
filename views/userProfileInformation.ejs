@@ -23,11 +23,11 @@
         <!-- User's First Name, Last Name, and Email -->
         <div class="row">
             <div class="col-md-4">
-                <label for="userFirstName" class="form-label">First Name</label>
+                <label for="userFirstName" class="form-label">First Name*</label>
                 <input name="firstName" type="text" class="form-control" id="userFirstName" value="<%= user && user.firstName || '' %>" disabled>
             </div>
             <div class="col-md-4">
-                <label for="userLastName" class="form-label">Last Name</label>
+                <label for="userLastName" class="form-label">Last Name*</label>
                 <input name="lastName" type="text" class="form-control" id="userLastName" value="<%= user && user.lastName || '' %>" disabled>
             </div>
             <div class="col-md-4">
@@ -82,11 +82,15 @@
             <div class="col-md-4">
                 <label for="userGender" class="form-label">Gender</label>
                 <select name="gender" class="form-select form-select-md col-mb-3" id="userGender" disabled>
-                    <option selected>Gender</option>
+                    <option value="" disabled selected>Select one</option>
                     <option value="male" <%= user && user.gender === 'male' ? 'selected' : '' %>>Male</option>
                     <option value="female" <%= user && user.gender === 'female' ? 'selected' : '' %>>Female</option>
                     <option value="other" <%= user && user.gender === 'other' ? 'selected' : '' %>>Other</option>
-                </select>
+                </select>                
+            </div>
+            <div class="form-group" id="otherGenderDiv" style="display: none;">
+                <label for="otherGender">Please specify</label>
+                <input type="text" name="otherGender" id="otherGender" class="form-control">
             </div>
             <div class="col-md-8">
                 <label for="userCareCard" class="form-label">Care Card Number</label>
@@ -167,5 +171,6 @@
 
 }
 </script>
+
 
 <%- include("templates/footerAuthenticatedUser") %> 
