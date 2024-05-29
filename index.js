@@ -784,17 +784,29 @@ app.post('/updateEmergencyStatus', sessionValidation, orgAuthorization, async (r
 app.post('/toggleEmergencyStatus', sessionValidation, orgAuthorization, async (req, res) => {
     const { emergencyId, newStatus } = req.body;
     try {
+        // Update the emergency status
         await emergencyCollection.updateOne(
             { _id: new ObjectId(emergencyId) },
             { $set: { status: newStatus } }
         );
+
+        if (newStatus === 'complete') {
+            // Get the ID of the assigned drone
+            const { assignedDrone } = await emergencyCollection.findOne({ _id: new ObjectId(emergencyId) });
+
+            // Update the status of the assigned drone to 'inactive'
+            await droneCollection.updateOne(
+                { _id: assignedDrone },
+                { $set: { status: 'inactive' } }
+            );
+        }
+
         res.redirect('/orgDashboard');
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error');
     }
 });
-
 
 
 app.get('/locationList', async (req, res) => {
