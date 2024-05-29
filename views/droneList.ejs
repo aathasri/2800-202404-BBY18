@@ -1,6 +1,4 @@
 
-<!-- <body id="x"> -->
-
 <%- include("templates/headerAuthenticated") %>
 <!-- Link to location list csss -->
 <head>
@@ -16,7 +14,6 @@
                         <th>Status</th>
                         <th>Location</th>
                         <th>Description</th>
-                        <th>id</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -26,7 +23,6 @@
                             <td><%= drone.status %></td>
                             <td><%= drone.location %></td>
                             <td><%= drone.description %></td>
-                            <td><%= drone._id %></td>
                         </tr>
                     <% }); %>
                 </tbody>
@@ -39,7 +35,8 @@
         </div>
     </main>
 
+    <br>
+    <br>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <%- include('templates/footerAuthenticatedOrg') %>
-</body>
-</html>
