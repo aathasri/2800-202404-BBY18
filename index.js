@@ -741,42 +741,72 @@ app.get('/orgDashboard', sessionValidation, orgAuthorization, async (req, res) =
         const requestedEmergencies = await emergencyCollection.find({ status: 'requested' }).toArray();
         const activeEmergencies = await emergencyCollection.find({ status: 'active' }).toArray();
         const completeEmergencies = await emergencyCollection.find({ status: 'complete' }).toArray();
+        const dronesInventoryCount = await droneCollection.countDocuments(); // Get the count of drones
+        const drones = await droneCollection.find().toArray();
 
-        res.render('orgDashboard', { requestedEmergencies, activeEmergencies, completeEmergencies });
+        res.render('orgDashboard', { 
+            requestedEmergencies, 
+            activeEmergencies, 
+            completeEmergencies,
+            dronesInventoryCount, // Pass the drones count to the template
+            drones
+        });
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error');
     }
 });
 
+
 app.post('/updateEmergencyStatus', sessionValidation, orgAuthorization, async (req, res) => {
-    const { emergencyId, newStatus } = req.body;
+    const { emergencyId, droneId } = req.body; // Also get the selected drone ID
     try {
+        // Update the emergency status to 'active'
         await emergencyCollection.updateOne(
             { _id: new ObjectId(emergencyId) },
-            { $set: { status: newStatus } }
+            { $set: { status: 'active', assignedDrone: new ObjectId(droneId) } }
         );
+
+        // Mark the selected drone as 'active'
+        await droneCollection.updateOne(
+            { _id: new ObjectId(droneId) },
+            { $set: { status: 'active' } }
+        );
+
         res.redirect('/orgDashboard');
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error');
     }
 });
+
 
 app.post('/toggleEmergencyStatus', sessionValidation, orgAuthorization, async (req, res) => {
     const { emergencyId, newStatus } = req.body;
     try {
+        // Update the emergency status
         await emergencyCollection.updateOne(
             { _id: new ObjectId(emergencyId) },
             { $set: { status: newStatus } }
         );
+
+        if (newStatus === 'complete') {
+            // Get the ID of the assigned drone
+            const { assignedDrone } = await emergencyCollection.findOne({ _id: new ObjectId(emergencyId) });
+
+            // Update the status of the assigned drone to 'inactive'
+            await droneCollection.updateOne(
+                { _id: assignedDrone },
+                { $set: { status: 'inactive' } }
+            );
+        }
+
         res.redirect('/orgDashboard');
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error');
     }
 });
-
 
 
 app.get('/locationList', async (req, res) => {
