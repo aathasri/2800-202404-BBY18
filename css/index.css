@@ -60,3 +60,21 @@
   padding: 1rem 2rem;
   font-size: 1.5rem;
 }
+
+
+    .fixed-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1030; /* Ensure it's above other content */
+    }
+
+    .content-wrapper {
+        margin-top: 60px; /* Adjust based on header height */
+        margin-bottom: 60px; /* Adjust based on footer height */
+    }
+
+    .fixed-top {
+      position: fixed;
+    }

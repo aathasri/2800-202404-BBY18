@@ -741,13 +741,20 @@ app.get('/orgDashboard', sessionValidation, orgAuthorization, async (req, res) =
         const requestedEmergencies = await emergencyCollection.find({ status: 'requested' }).toArray();
         const activeEmergencies = await emergencyCollection.find({ status: 'active' }).toArray();
         const completeEmergencies = await emergencyCollection.find({ status: 'complete' }).toArray();
+        const dronesInventoryCount = await droneCollection.countDocuments(); // Get the count of drones
 
-        res.render('orgDashboard', { requestedEmergencies, activeEmergencies, completeEmergencies });
+        res.render('orgDashboard', { 
+            requestedEmergencies, 
+            activeEmergencies, 
+            completeEmergencies,
+            dronesInventoryCount  // Pass the drones count to the template
+        });
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error');
     }
 });
+
 
 app.post('/updateEmergencyStatus', sessionValidation, orgAuthorization, async (req, res) => {
     const { emergencyId, newStatus } = req.body;
