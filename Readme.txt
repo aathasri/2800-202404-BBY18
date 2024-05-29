@@ -65,6 +65,20 @@ Used ChatGPT: chat.openai.com
 Mitchell MacDonald:
 
 Gurshaan Daula
+1. File: index.js
+Used ChatGPT: chat.openai.com
+- Used to help with retrieving data from mongoDB
+
+2. File: droneList.ejs
+Used ChatGPT: chat.openai.com  
+- Used to help with displaying data from mongoDB in a table format
+- Used to make back button
+
+3. Header and footer
+Used ChatGPT: chat.openai.com
+- Used to help with creating a responsive header and footer using bootstrap
+
+
 Aathavan Sriharan
 
 
