@@ -1,5 +1,9 @@
 <%- include("templates/headerAuthenticated") %> 
 
+<!-- Used chatgpt: chat.openai.com
+- Generated code to retrieve user information from the database and populate the user profile with previously entered information.
+- Generated code to submit any of the fields in the form filled out for the specific user. -->
+
 <div class="px-4 py-4 my-5 text-center">
     <h1 class="display-5 fw-bold text-body-emphasis"> User Profile and Medical History</h1>
     <div class="row mb-3">
@@ -64,7 +68,7 @@
         <div class="row">
             <div class="col-md-4">
                 <label for="userPhone" class="form-label">Phone Number</label>
-                <input name="phone" type="tel" class="form-control" id="userPhone" pattern="[0-9]{3}-[0-9{3}-[0-9]{4}"
+                <input name="phone" type="tel" class="form-control" id="userPhone" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                     placeholder="123-456-7890" value="<%= user && user.phone || '' %>" disabled>
             </div>
             <div class="col-md-4">

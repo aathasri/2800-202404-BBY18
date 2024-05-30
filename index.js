@@ -191,7 +191,7 @@ app.post('/orgInfo', upload.single('profilePicture'), async (req, res) => {
     }
 
     try {
-        const { orgName, orgJurisdiction, orgEmail, orgAddress, orgCity, orgProvince, orgPostalCode, orgPhone, orgFounded, orgAbout } = req.body;
+        const { orgName, orgJurisdiction, orgEmail, orgAddress, orgCity, orgProvince, orgPostalCode, orgPhone, orgFounded } = req.body;
 
         const userId = req.session.userId;
 
@@ -204,8 +204,7 @@ app.post('/orgInfo', upload.single('profilePicture'), async (req, res) => {
             orgProvince,
             orgPostalCode,
             orgPhone,
-            orgFounded,
-            orgAbout
+            orgFounded
         };
 
         if (req.file) {
@@ -237,7 +236,7 @@ app.get('/orgProfilePicture/:userId', async (req, res) => {
             res.contentType('image/jpeg');
             res.send(user.profilePictureData.buffer);
         } else {
-            res.sendFile(path.join(__dirname, 'images', 'gojo.png'));
+            res.sendFile(path.join(__dirname, 'images', 'placeholder_pp.jpg'));
         }       
     } catch (error) {
         console.error('Error:', error);
@@ -276,27 +275,33 @@ app.get('/orgProfilePicture/:userId', async (req, res) => {
   
   // Used ChatGpt to help accept form submission and editing. Chatgpt: chat.openai.com
   app.post('/callForHelp', async (req, res) => {
-      try {
-  
-          // Used gpt to figure out how to create a timestamp.
-          const timeStamp = new Date();
-          const formattedTimestamp = timeStamp.toLocaleString();
-  
-          // Gets the user's information
-          const userId = req.session.userId;
-          const user = await userCollection.findOne({ _id: new ObjectId(userId)});
-  
-          //Take relevant information from user and provide to org.
-          await emergencyCollection.insertOne({userId: req.session.userId, username: user.username, location: "" , time: formattedTimestamp, status: "requested"  })
-  
-  
-          // Redirect the org back to the profile page
-          res.redirect('/userDroneTracking');
-      } catch (error) {
-          console.error('Error:', error);
-          res.status(500).send('Internal Server Error');
-      }
-  });
+    try {
+        // Get the timestamp
+        const timeStamp = new Date();
+        const formattedTimestamp = timeStamp.toLocaleString();
+
+        // Get the user's information
+        const userId = req.session.userId;
+        const user = await userCollection.findOne({ _id: new ObjectId(userId) });
+
+        // Take relevant information from user and provide to org.
+        await emergencyCollection.insertOne({
+            userId: req.session.userId,
+            username: user.username,
+            latitude: req.body.latitude, 
+            longitude: req.body.longitude,
+            time: formattedTimestamp,
+            status: "requested"
+        });
+
+        // Redirect the user back to the profile page
+        res.redirect('/userDroneTracking');
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 
 app.get('/login', (req, res) => {
     var errorMessage = req.session.errorMessage || '';
@@ -326,7 +331,7 @@ app.post('/forgotPassword', async (req, res) => {
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to: email,
-        subject: 'Password Reset',
+        subject: 'Mr Listr: Password Reset' ,
         text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n`
             + `Please click on the following link, or paste this into your browser to complete the process:\n\n`
             + `http://${req.headers.host}/reset/${token}\n\n`
@@ -562,12 +567,9 @@ app.get('/userProfilePicture/:userId', async (req, res) => {
             res.contentType('image/jpeg'); // Adjust the content type based on the image format
 
             // Send the profile picture data as the response
-            res.send(user.profilePictureData.buffer); // Assuming profilePictureData is a Binary object
         } else {
             // If the user or profile picture data doesn't exist, send a default image or error message
-            res.sendFile(path.join(__dirname, 'images', 'default-profile-picture.png')); // Send default image
-            // Alternatively, you can send an error message
-            // res.status(404).send('Profile picture not found');
+            res.sendFile(path.join(__dirname, 'images', 'placeholder_pp.jpg'));
         }
     } catch (error) {
         console.error('Error:', error);
@@ -668,9 +670,11 @@ app.get('/droneList', async (req, res) => {
 });
 
 
-app.get('/addDrone',  sessionValidation, orgAuthorization, (req, res) => {
-    res.render('addDrone');
+app.get('/addDrone',  sessionValidation, orgAuthorization, async (req, res) => {
+    const locations = await locationCollection.find({}).toArray();
+    res.render('addDrone', { locations });
 });
+
 app.post('/addingDrone', async (req, res) => {
     var name = req.body.name;
     var status = req.body.status;
@@ -754,42 +758,70 @@ app.get('/orgDashboard', sessionValidation, orgAuthorization, async (req, res) =
         const requestedEmergencies = await emergencyCollection.find({ status: 'requested' }).toArray();
         const activeEmergencies = await emergencyCollection.find({ status: 'active' }).toArray();
         const completeEmergencies = await emergencyCollection.find({ status: 'complete' }).toArray();
-        
-        res.render('orgDashboard', { requestedEmergencies, activeEmergencies, completeEmergencies });
+        const dronesInventoryCount = await droneCollection.countDocuments(); // Get the count of drones
+        const drones = await droneCollection.find().toArray();
+
+        res.render('orgDashboard', { 
+            requestedEmergencies, 
+            activeEmergencies, 
+            completeEmergencies,
+            dronesInventoryCount, 
+            drones
+        });
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error');
     }
 });
 
+
 app.post('/updateEmergencyStatus', sessionValidation, orgAuthorization, async (req, res) => {
-    const { emergencyId, newStatus } = req.body;
+    const { emergencyId, droneId } = req.body; 
     try {
         await emergencyCollection.updateOne(
             { _id: new ObjectId(emergencyId) },
-            { $set: { status: newStatus } }
+            { $set: { status: 'active', assignedDrone: new ObjectId(droneId) } }
         );
+
+        await droneCollection.updateOne(
+            { _id: new ObjectId(droneId) },
+            { $set: { status: 'active' } }
+        );
+
         res.redirect('/orgDashboard');
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error');
     }
 });
+
 
 app.post('/toggleEmergencyStatus', sessionValidation, orgAuthorization, async (req, res) => {
     const { emergencyId, newStatus } = req.body;
     try {
+        // Update the emergency status
         await emergencyCollection.updateOne(
             { _id: new ObjectId(emergencyId) },
             { $set: { status: newStatus } }
         );
+
+        if (newStatus === 'complete') {
+            // Get the ID of the assigned drone
+            const { assignedDrone } = await emergencyCollection.findOne({ _id: new ObjectId(emergencyId) });
+
+            // Update the status of the assigned drone to 'inactive'
+            await droneCollection.updateOne(
+                { _id: assignedDrone },
+                { $set: { status: 'inactive' } }
+            );
+        }
+
         res.redirect('/orgDashboard');
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error');
     }
 });
-
 
 
 app.get('/locationList', async (req, res) => {
