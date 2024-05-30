@@ -1,7 +1,6 @@
 <%- include('templates/headerAuthenticated') %>
 
 <style>
-  /* Loading Spinner Styles */
   #loadingSpinner {
     position: fixed;
     width: 100%;
@@ -32,7 +31,6 @@
     }
   }
 
-  /* Hide main content initially */
   #mainContent {
     display: none;
   }
@@ -106,8 +104,8 @@
       const response = await fetch('/sendLocations');
       const data = await response.json();
       const customIcon = {
-            url: '/logo.png', // URL to the custom icon
-            scaledSize: new google.maps.Size(30, 30) // Scale the icon if necessary
+            url: '/logo.png',
+            scaledSize: new google.maps.Size(30, 30)
         };
       data.forEach(station => {
         new google.maps.Marker({
