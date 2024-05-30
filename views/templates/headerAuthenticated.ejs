@@ -12,16 +12,19 @@
     <!-- Link to your custom CSS file -->
     <link rel="stylesheet" href="/index.css">
 
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Bootstrap JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 </head>
 <body>
 
 <!-- Header -->
+<header class="fixed-top">
 <nav class="navbar p-2">
     <div class="container-fluid">
         <!-- Branding -->
@@ -37,9 +40,6 @@
             <div class="offcanvas-body">
                 <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/settings">Settings</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/aboutUs">About Us</a>
                     </li>
                     <li class="nav-item">
@@ -53,5 +53,6 @@
         </div>
     </div>
 </nav>
+</header>
 
-<main>
+<main class="content-wrapper">

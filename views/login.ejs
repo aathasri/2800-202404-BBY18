@@ -5,11 +5,6 @@
       <div class="row justify-content-center">
         <div class="col-md-6">
           <h1 class="mb-4">Login</h1>
-          <div id="g_id_onload"
-          data-client_id="822365614592-fd7gaj776mruumefv8ncadfo89ok6nuv.apps.googleusercontent.com"
-          data-callback="handleCredentialResponse">
-     </div>
-     <div class="g_id_signin" data-type="standard"></div>
      <br>
      <br>
           <form action="/loggingin" method="post">
@@ -20,6 +15,7 @@
             <div class="form-group">
               <label for="password">Password</label>
               <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password">
+              Show Password     <span class="eye-icon" id="togglePassword">&#128065;</span>
             </div>
             <br>
             <button type="submit" class="btn btn-primary">Submit</button>
@@ -28,5 +24,24 @@
         </div>
       </div>
     </div>  
-
+    <script>
+      document.getElementById('showPassword').addEventListener('change', function() {
+          const passwordInput = document.getElementById('password');
+          if (this.checked) {
+              passwordInput.type = 'text';
+          } else {
+              passwordInput.type = 'password';
+          }
+      });
+  </script>
+  <script>
+    document.getElementById('togglePassword').addEventListener('click', function () {
+        const passwordInput = document.getElementById('password');
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+    
+        // Toggle the eye icon between eye and eye with slash
+        this.textContent = type === 'password' ? '\u{1F441}' : '\u{1F441}\u{200D}\u{1F5E8}';
+    });
+    </script>
 <%- include('templates/footerUnauthenticated') %>

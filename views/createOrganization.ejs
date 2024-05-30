@@ -17,22 +17,25 @@
     <h1 class="mb-4">Enter Organization Here</h1>
     <form action='/submitOrg' method='post' class="needs-validation" novalidate>
         <div class="mb-3">
-            <label for="username" class="form-label">Organization Name:</label>
+            <label for="username" class="form-label">Organization Name*</label>
             <input name='username' type='text' class="form-control" id="username" placeholder='Name' required>
             <div class="invalid-feedback">
                 Please enter a name.
             </div>
         </div>
         <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
+            <label for="email" class="form-label">Email*</label>
             <input name='email' type='email' class="form-control" id="email" placeholder='Email' required>
             <div class="invalid-feedback">
                 Please enter a valid email address.
             </div>
         </div>
         <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input name='password' type='password' class="form-control" id="password" placeholder='Password' required>
+            <label for="password" class="form-label">Password*</label>
+            <div class="password-wrapper">
+                <input name='password' type='password' class="form-control" id="password" placeholder='Password' required>
+               Show Password        <span class="eye-icon" id="togglePassword">&#128065;</span>
+            </div>
             <div class="invalid-feedback">
                 Please enter a password.
             </div>
@@ -62,7 +65,26 @@
             })
     })()
 </script>
-
+<script>
+    document.getElementById('showPassword').addEventListener('change', function() {
+        const passwordInput = document.getElementById('password');
+        if (this.checked) {
+            passwordInput.type = 'text';
+        } else {
+            passwordInput.type = 'password';
+        }
+    });
+</script>
+<script>
+    document.getElementById('togglePassword').addEventListener('click', function () {
+        const passwordInput = document.getElementById('password');
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+    
+        // Toggle the eye icon between eye and eye with slash
+        this.textContent = type === 'password' ? '\u{1F441}' : '\u{1F441}\u{200D}\u{1F5E8}';
+    });
+    </script>
 </body>
 </html>
 

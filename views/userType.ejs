@@ -32,15 +32,40 @@
     h2 {
         margin-bottom: 20px; /* Add some space between text and buttons */
     }
+    img{
+        text-align: center;
+
+        width: 50%;
+    }
+    .flex-container {
+        padding-top: 75px;
+            display: flex;
+            justify-content: center; /* Horizontal centering */
+            align-items: center;    /* Vertical centering */
+        }
 </style>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
 <body>
 <div class="container">
-    <h2>How will you be using Asclepius?</h2>
-    Please select one
+    <h1>How will you be using Asclepius?</h1>
+    <h5>Please select one</h5>
     <div class="button-container">
         <button id="button1" onclick="window.location.href='/createUser'">Individual User</button>
         <button id="button2" onclick="window.location.href='/createOrganization'">Organization</button>
     </div>
+</div>
+<div class="flex-container">
+<img src="/logo.png" alt="Logo">
 </div>
 </body>
 

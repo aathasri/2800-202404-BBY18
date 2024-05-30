@@ -1,123 +1,180 @@
+<!-- Hugo Amuan: Edited by ChatGPT to fix syntax issues such as missing , {} () => and %. 
+also includes logic errors and bootstrap simplification/fixing -->
 <%- include("templates/headerAuthenticated") %>
-
 <br>
-<div class="text-center">
-    <h1> 🏥 Dashboard 🏥 </h1>
-</div>
-<div class="container mt-4">
+<div class="container-fluid mt-0 px-3">
     <div class="row mb-4">
         <div class="col-12">
             <div class="card">
-                  <!-- <div class="card-header bg-dark text-white">
-                    <h1 class="mb-0 text-center">🏥 Dashboard 🏥</h1>
-                </div> -->
-                <div class="card-body d-flex justify-content-between">
+                <div class="text-center">
+                    <h2> 🏥 Dashboard 🏥 </h2>
+                </div>
+                <div class="card-body d-flex justify-content-between flex-wrap">
                     <div>
-                        <strong>Drones in Inventory:</strong> 15
+                        <strong>Drones in Inventory:</strong> <%= dronesInventoryCount %>
                     </div>
                     <div>
-                        <strong>Drones Out and Active:</strong> 5
+                        <strong>Pending Requests:</strong> <%= requestedEmergencies.length %>
                     </div>
                     <div>
-                        <strong>Pending Emergency Requests:</strong> 3
+                        <strong>Active Requests:</strong> <%= activeEmergencies.length %>
                     </div>
                     <div>
-                        <strong>Completed Emergencies:</strong> 10
+                        <strong>Completed Emergencies:</strong> <%= completeEmergencies.length %>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <!-- Emergency Requests -->
-        <div class="col-12 col-md-6 mb-4">
-            <div class="card">
-                <div class="card-header bg-dark text-white">
-                    <h4 class="mb-0 text-center">Emergency Requests</h4>
-                </div>
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <strong class="mb-0">Case 1</strong>
-                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#emergencyModal">View More</button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Ongoing Emergencies -->
-        <div class="col-12 col-md-6 mb-4">
-            <div class="card">
-                <div class="card-header bg-dark text-white">
-                    <h4 class="mb-0 text-center">Ongoing Emergencies</h4>
-                </div>
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <strong class="mb-0">Case 1</strong>
-                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#ongoingModal">View More</button>
                 </div>
             </div>
         </div>
     </div>
     
+    <!-- Other content here -->
+    
     <div class="row mb-4">
-        <!-- Completed Emergencies -->
+        <!-- Requested Emergencies -->
+        <div class="col-12 col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h4 class="mb-0 text-center">Requested Emergencies</h4>
+                </div>
+                <div class="scrollable" style="max-height: 300px; overflow-y: auto;">
+                    <% requestedEmergencies.forEach(rem => { %>
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <strong class="mb-0"><%= rem.username %></strong>
+                            
+                            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#emergencyModal<%= rem._id %>">View More</button>
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Emergencies -->
+        <div class="col-12 col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h4 class="mb-0 text-center">Active Emergencies</h4>
+                </div>
+                <div class="scrollable" style="max-height: 300px; overflow-y: auto;">
+                    <% activeEmergencies.forEach(aem => { %>
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <strong class="mb-0"><%= aem.username %></strong>
+                            <div>
+                                <!-- Toggle button to mark emergency as complete -->
+                                <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#activeModal<%= aem._id %>">View More</button>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
         <div class="col-12">
             <div class="card">
                 <div class="card-header bg-dark text-white">
                     <h4 class="mb-0 text-center">Completed Emergencies</h4>
                 </div>
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <strong class="mb-0">Case 1</strong>
-                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#completedModal">View More</button>
-                </div>
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <strong class="mb-0">Case 1</strong>
-                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#completedModal">View More</button>
-                </div>
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <strong class="mb-0">Case 1</strong>
-                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#completedModal">View More</button>
-                </div>
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <strong class="mb-0">Case 1</strong>
-                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#completedModal">View More</button>
-                </div>
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <strong class="mb-0">Case 1</strong>
-                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#completedModal">View More</button>
-                </div>
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <strong class="mb-0">Case 1</strong>
-                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#completedModal">View More</button>
-                </div>
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <strong class="mb-0">Case 1</strong>
-                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#completedModal">View More</button>
-                </div>
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <strong class="mb-0">Case 1</strong>
-                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#completedModal">View More</button>
+                <div class="scrollable" style="max-height: 300px; overflow-y: auto;">
+                    <% completeEmergencies.forEach(cem => { %>
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <strong class="mb-0"><%= cem.username %></strong>
+                            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#completedModal<%= cem._id %>">View More</button>
+                        </div>
+                    <% }); %>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Emergency Modal -->
-    <div class="modal fade" id="emergencyModal" tabindex="-1" role="dialog" aria-labelledby="emergencyModalLabel" aria-hidden="true">
+<% requestedEmergencies.concat(activeEmergencies).concat(completeEmergencies).forEach(em => { %>
+    <div class="modal fade" id="emergencyModal<%= em._id %>" tabindex="-1" role="dialog" aria-labelledby="emergencyModalLabel<%= em._id %>" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title" id="emergencyModalLabel">Emergency Information</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <h5 class="modal-title" id="emergencyModalLabel<%= em._id %>">Emergency Information</h5>
                 </div>
                 <div class="modal-body">
                     <ul>
-                        <li><strong>User ID:</strong> 12345</li>
-                        <li><strong>Emergency ID:</strong> 98765</li>
-                        <li><strong>Location:</strong> Holland Park</li>
-                        <li><strong>Timestamp:</strong> 2024-05-22 12:00 PM</li>
-                        <li><strong>Status:</strong> Active</li>
-                        <li><strong>Description:</strong> Man has bpm of 280 after taking fake MDMA at FVDED</li>
+                        <li><strong>User ID:</strong> <%= em.userId %></li>
+                        <li><strong>Emergency ID:</strong> <%= em._id %></li>
+                        <li><strong>Username: </strong><%= em.username %></strong></li>
+                        <li><strong>Latitude:</strong> <%= em.latitude %></li>
+                        <li><strong>Longitude:</strong> <%= em.longitude %></li>
+                        <li><strong>Timestamp:</strong> <%= em.time %></li>
+                        <li><strong>Status:</strong> <%= em.status %></li>
+                    </ul>
+                    <% if (em.status === 'requested') { %>
+                        <form action="/updateEmergencyStatus" method="POST">
+                            <input type="hidden" name="emergencyId" value="<%= em._id %>">
+                            <label for="droneId">Select A Drone:</label>
+                            <!-- Add a dropdown to select an inactive drone -->
+                            <select name="droneId" class="form-control mb-2">
+                                <% drones.forEach(drone => { %>
+                                    <% if (drone.status === 'inactive') { %>
+                                        <option value="<%= drone._id %>"><%= drone.name %></option>
+                                    <% } %>
+                                <% }); %>
+                            </select>
+                            <button type="submit" class="btn btn-success">Accept</button>
+                        </form>
+                    <% } %>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<% }); %>
+
+<% activeEmergencies.forEach(aem => { %>
+    <div class="modal fade" id="activeModal<%= aem._id %>" tabindex="-1" role="dialog" aria-labelledby="activeModalLabel<%= aem._id %>" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="activeModalLabel<%= aem._id %>">Ongoing Emergency Information</h5>
+                </div>
+                <div class="modal-body">
+                    <ul>
+                        <li><strong>User ID:</strong> <%= aem.userId %></li>
+                        <li><strong>Emergency ID:</strong> <%= aem._id %></li>
+                        <li><strong>Username: </strong><%= aem.username %></strong></li>
+                        <li><strong>Latitude:</strong> <%= aem.latitude %></li>
+                        <li><strong>Longitude:</strong> <%= aem.longitude %></li>
+                        <li><strong>Timestamp:</strong> <%= aem.time %></li>
+                        <li><strong>Status:</strong> <%= aem.status %></li>
+                    </ul>
+                    <form action="/toggleEmergencyStatus" method="POST">
+                        <input type="hidden" name="emergencyId" value="<%= aem._id %>">
+                        <input type="hidden" name="newStatus" value="complete">
+                        <button type="submit" class="btn btn-success">Complete</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<% }); %>
+
+<% completeEmergencies.forEach(cem => { %>
+    <div class="modal fade" id="completedModal<%= cem._id %>" tabindex="-1" role="dialog" aria-labelledby="completedModalLabel<%= cem._id %>" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="completedModalLabel<%= cem._id %>">Completed Emergency Information</h5>
+                </div>
+                <div class="modal-body">
+                    <ul>
+                        <li><strong>User ID:</strong> <%= cem.userId %></li>
+                        <li><strong>Emergency ID:</strong> <%= cem._id %></li>
+                        <li><strong>Username: </strong><%= cem.username %></strong></li>
+                        <li><strong>Latitude:</strong> <%= cem.latitude %></li>
+                        <li><strong>Longitude:</strong> <%= cem.longitude %></li>
+                        <li><strong>Timestamp:</strong> <%= cem.time %></li>
+                        <li><strong>Status:</strong> <%= cem.status %></li>
                     </ul>
                 </div>
                 <div class="modal-footer">
@@ -126,60 +183,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Ongoing Modal -->
-    <div class="modal fade" id="ongoingModal" tabindex="-1" role="dialog" aria-labelledby="ongoingModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title" id="ongoingModalLabel">Ongoing Emergency Information</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <ul>
-                        <li><strong>User ID:</strong> 54321</li>
-                        <li><strong>Emergency ID:</strong> 12931923</li>
-                        <li><strong>Location:</strong> PNE Vancouver</li>
-                        <li><strong>Timestamp:</strong> 2024-05-21 11:00 AM</li>
-                        <li><strong>Status:</strong> Ongoing</li>
-                        <li><strong>Description:</strong> Guy forgot his insulin pump, needs immediate aid!</li>
-                    </ul>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Completed Modal -->
-    <div class="modal fade" id="completedModal" tabindex="-1" role="dialog" aria-labelledby="completedModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title" id="completedModalLabel">Completed Emergency Information</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <ul>
-                        <li><strong>User ID:</strong> 67890</li>
-                        <li><strong>Emergency ID:</strong> 12345</li>
-                        <li><strong>Location:</strong> South Meridian, Whiterock</li>
-                        <li><strong>Timestamp:</strong> 2024-05-20 10:00 AM</li>
-                        <li><strong>Status:</strong> Completed</li>
-                        <li><strong>Description:</strong> Poisonous snake bite affecting a kid near the river.</li>
-                    </ul>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<% }); %>
 
 <%- include("templates/footerAuthenticatedOrg") %>

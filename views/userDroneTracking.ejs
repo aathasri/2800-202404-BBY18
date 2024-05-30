@@ -1,24 +1,169 @@
 <%- include('templates/headerAuthenticated') %>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=<%= maps_api %>&callback=initMap" async defer></script>
-    <script src="/maps.js" defer></script>
+<style>
+  #loadingSpinner {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 1000;
+  }
 
-    <div class="card p-3 m-3">
-        <div class="card-body">
-            <h5 class="card-title">Drones Near You</h5>
-        </div>
-        <div id="mapContainer" >
-            <div id="map" class="rounded"></div>
-        </div>
+  .spinner {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  #mainContent {
+    display: none;
+  }
+
+  #loading {
+    margin-top: 20px;
+  }
+</style>
+
+<script>
+  let map;
+
+  function initMap() {
+    const mapStyle = [
+      { featureType: 'poi', stylers: [{ visibility: 'off' }] }
+    ];
+
+    const mapOptions = {
+      zoom: 15,
+      center: { lat: 0, lng: 0 },
+      styles: mapStyle
+    };
+
+    map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const userLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+          map.setCenter(userLocation);
+
+          new google.maps.Marker({
+            position: userLocation,
+            map: map,
+            title: 'Your Location',
+          });
+
+          fetchDroneStations().then(() => {
+            document.getElementById('loadingSpinner').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+          });
+        },
+        () => handleLocationError(true, map.getCenter()),
+        { timeout: 10000 }
+      );
+    } else {
+      handleLocationError(false, map.getCenter());
+    }
+  }
+
+  function handleLocationError(browserHasGeolocation, pos) {
+    const infoWindow = new google.maps.InfoWindow({
+      position: pos,
+      content: browserHasGeolocation
+        ? 'Error: The Geolocation service failed.'
+        : 'Error: Your browser doesn\'t support geolocation.',
+    });
+    infoWindow.open(map);
+
+    document.getElementById('loadingSpinner').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+  }
+
+
+  
+  async function fetchDroneStations() {
+    try {
+      const response = await fetch('/sendLocations');
+      const data = await response.json();
+      const customIcon = {
+            url: '/logo.png',
+            scaledSize: new google.maps.Size(30, 30)
+        };
+      data.forEach(station => {
+        new google.maps.Marker({
+          position: { lat: station.coordinates.lat, lng: station.coordinates.lng },
+          map: map,
+          title: station.name,
+          icon: customIcon,
+        });
+      });
+    } catch (error) {
+      console.error('Error fetching drone stations:', error);
+    }
+  }
+
+  window.addEventListener('load', () => {
+    const script = document.createElement('script');
+    script.src = "https://maps.googleapis.com/maps/api/js?key=<%= maps_api %>&callback=initMap";
+    script.async = true;
+    script.defer = true;
+    script.onerror = () => {
+      console.error('Failed to load the Google Maps API script.');
+      document.getElementById('loadingSpinner').style.display = 'none';
+      document.getElementById('mainContent').style.display = 'block';
+    };
+    document.head.appendChild(script);
+  });
+</script>
+
+<div id="loadingSpinner">
+  <div class="spinner"></div>
+  <div id="loading">
+    <h1>Loading...</h1>
+  </div>
+</div>
+
+<div id="mainContent">
+  <div class="card mapCard">
+    <div class="card-body mapCardTitle">
+      <h1 class="card-title" style="text-align: center;">Drones Near You</h1>
     </div>
-
-    <div class="d-grid gap-2 px-3">
-        <a href="/locationList" class="btn btn-primary btn-lg" type="button">Location List</a>
-        <a href="/droneList" class="btn btn-secondary btn-lg" type="button">Drone List</a>
-      </div>
-<br>
-<br>
-<br>
-<br>
-<br>
+    <div id="map" class="rounded"></div>
+  </div>
+</div>
+<script>
+    // Get the message query parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const message = urlParams.get('message');
+    if (message) {
+      // Delay the alert by 10 seconds (10000 milliseconds)
+      setTimeout(() => {
+        Swal.fire({
+      title: 'Help is coming',
+      text: 'A drone has been dispatched to your location.',
+      icon: 'success',
+      timer: 5000
+    });      }, 10000);
+    }
+  </script>
 <%- include('templates/footerAuthenticatedUser') %>
+
+

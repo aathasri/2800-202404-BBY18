@@ -1,16 +1,65 @@
-<%- include("templates/headerAuthenticated") %> 
+<%- include("templates/headerAuthenticated") %>
 
-<div class="px-4 py-5 my-5 text-center">
+  <div class="px-4 py-5 my-5 text-center">
     <h1 class="display-5 fw-bold text-body-emphasis">About Asclepius</h1>
     <div class="col-lg-6 mx-auto">
-      <p class="lead mb-4">We're team passionate about providing a platform that allows first responders and paramedics to leverage the drone technology of 2054 to save lives.</p>
+      <p class="lead mb-4">We're team passionate about providing a platform that allows first responders and paramedics
+        to leverage the drone technology of 2054 to save lives.</p>
     </div>
   </div>
 
-  <% if (user_type == 'user') { %>
+  <div class="container col-xxl-8 px-4 py-5">
+    <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+      <div class="col-10 col-sm-8 col-lg-6">
+        <img src="logo.png" class="d-block mx-lg-auto img-fluid" alt="Bootstrap Themes" width="700" height="500" loading="lazy">
+      </div>
+      <div class="col-lg-6">
+        <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">Who we are:</h1>
+        <p class="lead">Our team is BBY-18 in BCIT's COMP 2800 course. We are,</p>
+        <ol>
+          <li>
+            <p class="lead">Aathavan Sriharan</p>
+          </li>
+          <li>
+            <p class="lead">Gurshaan Daula</p>
+          </li>
+          <li>
+            <p class="lead">Hugo Amuan</p>
+          </li>
+          <li>
+            <p class="lead">Mitchell MacDonald</p>
+          </li>
+          <li>
+            <p class="lead">Tanner Parkes</p>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="px-4 pt-5 my-5 mp-4 text-center border-bottom">
+    <h1 class="display-4 fw-bold text-body-emphasis">Our Vision:</h1>
+    <div class="col-lg-6 mx-auto">
+      <p class="lead mb-4">We see the use of drones as the future for paramedicine. Currently, the field struggles to provide adequite response times
+        to many facing life threatening emergencies in Canada due to the expansive rural and suburban areas making fast responses difficult. With the utilization
+        of drones to assist paramedics in not only getting to assist the patient faster, they can provide a birds eye view of the area to help ensure that they 
+        can request the required assistance and resources to help ensure the safety of all involved emergency situations.
+      </p>
+      <p class="lead mb-4"> Asclepius intends to provide emergency services with a platform in which they can recieve relevant medical information for paramedics and health care professionals.
+        Additionally, Asclepius will provide a platform for organizations to mangage their drones and provide patients piece of mind with notifications that help is coming, and fast. 
+      </p>
+    </div>
+    <div style="max-height: 30vh;">
+      <div class="container px-5 mb-5">
+        <img src="transparent-drone-uav-in-flight-png.webp" class="img-fluid border rounded-3 shadow-lg mb-4" alt="Example image" width="700" height="500" loading="lazy">
+      </div>
+    </div>
+  </div>
+
+  <% if (user_type=='user' ) { %>
     <%- include("templates/footerAuthenticatedUser") %>
-<% } else if (user_type == 'org') { %> 
-    <%- include("templates/footerAuthenticatedOrg") %>
-<% } else { %> 
-<%- include("templates/footerUnauthenticated") %>
-<% } %>
+      <% } else if (user_type=='org' ) { %>
+        <%- include("templates/footerAuthenticatedOrg") %>
+          <% } else { %>
+            <%- include("templates/footerUnauthenticated") %>
+              <% } %>

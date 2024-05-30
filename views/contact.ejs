@@ -1,57 +1,54 @@
 <%- include("templates/headerAuthenticated") %>
 
-<!-- Used userProfileInformation.ejs as a template for orgProfile.
-     All attributions to AI (chat.openai.com) from userProfileInformation are used here. -->
-
-<div class="px-4 py-4 my-5 text-center">
-    <h1 class="display-5 fw-bold text-body-emphasis"> Contact Asclepius </h1>
-</div>
-
-<div class="px-4 py-4 my-5 text-center">
-    <h2 class="display-5 text-body-emphasis"> Would you like to get in touch with us? Please fill out the form below or contact us at 1-800-000-000</h2>
-</div>
-
-<!-- Contact Form -->
-<div>
-    <form>
-        <div class="row">
-            <div class="col-md-12">
-                <label for="fullName" class="form-label">Full Name *</label>
-                <input name="fullName" type="text" class="form-control" id="fullName" required="true">
-            </div>
+    <div class="px-4 py-4 my-5 text-center">
+        <h1 class="display-5 fw-bold text-body-emphasis"> Contact Asclepius </h1>
+        <div class="col-lg-6 mx-auto">
+            <p class="lead mb-4">Would you like to get in touch with us? Please fill out the form below or contact us by
+                phone at: 1-800-000-000</p>
         </div>
+    </div>
 
-        <div class="row">
-            <div class="col-md-6">
-                <label for="contactEmail" class="form-label">Email Address *</label>
-                <input name="contactEmail" type="email" class="form-control" id="contactEmail" required="true">
+    <!-- Contact Form -->
+    <div>
+        <form>
+            <div class="row">
+                <div class="col-md-12">
+                    <label for="fullName" class="form-label">Full Name *</label>
+                    <input name="fullName" type="text" class="form-control" id="fullName" required="true">
+                </div>
             </div>
-            <div class="col-md-6">
-                <label for="contactPhone" class="form-label">Phone Number</label>
-                <input name="contactPhone" type="tel" class="form-control" id="contactPhone" pattern="[0-9]{3}-[0-9{3}-[0-9]{4}"
-                    placeholder="123-456-7890">
+
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="contactEmail" class="form-label">Email Address *</label>
+                    <input name="contactEmail" type="email" class="form-control" id="contactEmail" required="true">
+                </div>
+                <div class="col-md-6">
+                    <label for="contactPhone" class="form-label">Phone Number</label>
+                    <input name="contactPhone" type="tel" class="form-control" id="contactPhone"
+                        pattern="[0-9]{3}-[0-9{3}-[0-9]{4}" placeholder="123-456-7890">
+                </div>
             </div>
-        </div>
 
-        <!-- Contact Message -->
-        <div class="row">
-            <div class="col-md-12">
-                <label for="contactMessage" class="form-label">Message *</label>
-                <textarea name="contactMessage" type="text" class="form-control" id="contactMessage"
-                    rows="3" disabled required="true"></textarea>
+            <!-- Contact Message -->
+            <div class="row">
+                <div class="col-md-12">
+                    <label for="contactMessage" class="form-label">Message *</label>
+                    <textarea name="contactMessage" type="text" class="form-control" id="contactMessage" rows="3"
+                        disabled required="true"></textarea>
+                </div>
             </div>
-        </div>
 
-        <div class="col-md-3 mx-auto mt-3">
-            <button type="submit" class="btn btn-primary" id="saveButton" disabled>Send</button>
-        </div>
-</form>
-</div>
+            <div class="col-md-3 mx-auto mt-3">
+                <button type="submit" class="btn btn-primary" id="saveButton" disabled>Send</button>
+            </div>
+        </form>
+    </div>
 
-<% if (user_type == 'user') { %>
-    <%- include("templates/footerAuthenticatedUser") %>
-<% } else if (user_type == 'org') { %> 
-    <%- include("templates/footerAuthenticatedOrg") %>
-<% } else { %> 
-<%- include("templates/footerUnauthenticated") %>
-<% } %>
+    <% if (user_type=='user' ) { %>
+        <%- include("templates/footerAuthenticatedUser") %>
+            <% } else if (user_type=='org' ) { %>
+                <%- include("templates/footerAuthenticatedOrg") %>
+                    <% } else { %>
+                        <%- include("templates/footerUnauthenticated") %>
+                            <% } %>

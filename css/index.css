@@ -38,6 +38,43 @@
 
 /* Map config */
 #map {
-  height: 55vh;
+  padding: 0;
+  margin: 0;
+  height: 100%;
   width: 100%;
 }
+
+.mapCard {
+  height: 65vh;
+  margin: 1em;
+  padding: 1em;
+}
+
+.mapCardTitle {
+  margin: 0em;
+  padding: 0em;
+
+}
+
+.btnXL {
+  padding: 3rem 6rem;
+  font-size: 3rem;
+}
+
+
+    .fixed-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1030; /* Ensure it's above other content */
+    }
+
+    .content-wrapper {
+        margin-top: 60px; /* Adjust based on header height */
+        margin-bottom: 60px; /* Adjust based on footer height */
+    }
+
+    .fixed-top {
+      position: fixed;
+    }
