@@ -26,6 +26,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+
+
+
 app.post('/uploadProfilePicture', upload.single('profilePicture'), async (req, res) => {
     try {
         if (!req.file) {
@@ -295,7 +298,7 @@ app.get('/orgProfilePicture/:userId', async (req, res) => {
         });
 
         // Redirect the user back to the profile page
-        res.redirect('/userDroneTracking');
+        res.redirect('/userDroneTracking?message=A drone has been dispatched to your location!');
     } catch (error) {
         console.error('Error:', error);
         res.status(500).send('Internal Server Error');
