@@ -41,6 +41,7 @@ Used chatgpt: chat.openai.com
 - Generated the enable form function to control the profile form with the edit button. 
 
 Hugo Amuan:
+
 1. File: index.js
 Used ChatGPT: chat.openai.com
 - npm multer used to handle file uploads for profile picture. 
@@ -61,8 +62,20 @@ Used ChatGPT: chat.openai.com
 Used ChatGPT: chat.openai.com
 - Helped with retrieval of images for profile picture from mongoDB.
 
-
 Mitchell MacDonald:
+1. File: userType.ejs
+Used ChatGPT: chat.openai.com
+- Used to help in creating the hover feature on the buttons
+- Used for some help on authorization
+
+
+2. File: Login and Sign-up pages
+Used ChatGPT: chat.openai.com
+- Used for show password function
+
+3. File: All
+Used ChatGPT: chat.openai.com
+- Used for most small bug fixes
 
 Gurshaan Daula: 
 1. File: index.js
@@ -84,11 +97,21 @@ Used ChatGPT: chat.openai.com
 
 Aathavan Sriharan
 
+1. File: UserDroneTracking
+Used ChatGPT: chat.openai.com
+- Used to help connect the google maps api and display the current location
 
 Other: 
 
 Tanner Parkes:
 Mitchell MacDonald:
+1. File: index.js
+Used Sample Code from 2537
+- This code was copied and modified into our site for login and logout.
+2. File: Login and Sign-up pages
+Used fontawesome.com
+- Was used for the eye icon in show password.
+
 Hugo Amuan:
 Gurshaan Daula:
 Aathavan Sriharan:
