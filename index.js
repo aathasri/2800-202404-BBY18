@@ -26,6 +26,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+
+
+
 app.post('/uploadProfilePicture', upload.single('profilePicture'), async (req, res) => {
     try {
         if (!req.file) {
@@ -295,7 +298,7 @@ app.get('/orgProfilePicture/:userId', async (req, res) => {
         });
 
         // Redirect the user back to the profile page
-        res.redirect('/userDroneTracking');
+        res.redirect('/userDroneTracking?message=A drone has been dispatched to your location!');
     } catch (error) {
         console.error('Error:', error);
         res.status(500).send('Internal Server Error');
@@ -645,9 +648,19 @@ app.get('/logout', (req, res) => {
 });
 
 // Added by Aathavan
-app.get('/userDroneTracking', (req, res) => {
-    res.render('userDroneTracking', {maps_api: maps_api_key}); 
+app.get('/userDroneTracking', async (req, res) => {
+    res.render('userDroneTracking', { maps_api: maps_api_key });
 });
+
+app.get('/sendLocations', async (req, res) => {
+    try {
+        const locations = await locationCollection.find().toArray();
+        res.json(locations);
+    } catch (err) {
+        res.status(500).send(err.toString());
+    }
+});
+
 
 app.get('/droneList', async (req, res) => {
     try {
@@ -707,6 +720,8 @@ app.get('/addLocation',sessionValidation, orgAuthorization, (req, res) => {
 app.post('/addingLocation', async (req, res) => {
     var name = req.body.name;
     var location = req.body.location;
+    var lng = parseFloat(req.body.longitude);
+    var lat = parseFloat(req.body.latitude);
     var description = req.body.description;
 
     const schema = Joi.object(
@@ -724,7 +739,7 @@ app.post('/addingLocation', async (req, res) => {
     }
 
 
-    var result = await locationCollection.insertOne({ name: name, location: location, description: description, user_type: "Location" });
+    var result = await locationCollection.insertOne({ name: name, location: location, coordinates: {lat: lat, lng: lng}, description: description, user_type: "Location" });
     console.log("Inserted Location");
 
     // req.session.authenticated = true;
