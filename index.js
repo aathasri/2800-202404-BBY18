@@ -643,9 +643,19 @@ app.get('/logout', (req, res) => {
 });
 
 // Added by Aathavan
-app.get('/userDroneTracking', (req, res) => {
-    res.render('userDroneTracking', {maps_api: maps_api_key}); 
+app.get('/userDroneTracking', async (req, res) => {
+    res.render('userDroneTracking', { maps_api: maps_api_key });
 });
+
+app.get('/sendLocations', async (req, res) => {
+    try {
+        const locations = await locationCollection.find().toArray();
+        res.json(locations);
+    } catch (err) {
+        res.status(500).send(err.toString());
+    }
+});
+
 
 app.get('/droneList', async (req, res) => {
     try {
@@ -703,6 +713,8 @@ app.get('/addLocation',sessionValidation, orgAuthorization, (req, res) => {
 app.post('/addingLocation', async (req, res) => {
     var name = req.body.name;
     var location = req.body.location;
+    var lng = parseFloat(req.body.longitude);
+    var lat = parseFloat(req.body.latitude);
     var description = req.body.description;
 
     const schema = Joi.object(
@@ -720,7 +732,7 @@ app.post('/addingLocation', async (req, res) => {
     }
 
 
-    var result = await locationCollection.insertOne({ name: name, location: location, description: description, user_type: "Location" });
+    var result = await locationCollection.insertOne({ name: name, location: location, coordinates: {lat: lat, lng: lng}, description: description, user_type: "Location" });
     console.log("Inserted Location");
 
     // req.session.authenticated = true;
@@ -742,7 +754,7 @@ app.get('/orgDashboard', sessionValidation, orgAuthorization, async (req, res) =
         const requestedEmergencies = await emergencyCollection.find({ status: 'requested' }).toArray();
         const activeEmergencies = await emergencyCollection.find({ status: 'active' }).toArray();
         const completeEmergencies = await emergencyCollection.find({ status: 'complete' }).toArray();
-
+        
         res.render('orgDashboard', { requestedEmergencies, activeEmergencies, completeEmergencies });
     } catch (error) {
         console.log(error);
