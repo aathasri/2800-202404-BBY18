@@ -662,7 +662,7 @@ app.get('/sendLocations', async (req, res) => {
 });
 
 
-app.get('/droneList', async (req, res) => {
+app.get('/droneList', orgAuthorization, sessionValidation, async (req, res) => {
     try {
         const drones = await droneCollection.find().toArray();
         res.render('droneList', { drones: drones });
@@ -816,7 +816,7 @@ app.post('/toggleEmergencyStatus', sessionValidation, orgAuthorization, async (r
 });
 
 
-app.get('/locationList', async (req, res) => {
+app.get('/locationList', orgAuthorization, sessionValidation, async (req, res) => {
     try {
         const locations = await locationCollection.find().toArray();
         res.render('locationList', { locations: locations });
