@@ -3,17 +3,16 @@
     <!-- Used userProfileInformation.ejs as a template for orgProfile.
      All attributions to AI (chat.openai.com) from userProfileInformation are used here. -->
 
-    <div class="px-4 py-4 my-5 text-center">
-        <h1 class="display-5 fw-bold text-body-emphasis"> Organization Profile </h1>
-        <div class="row">
-            <div class="col-md-6 offset-md-3 text-center">
-                <div class="position-relative d-inline-block">
-                    <img src="/orgProfilePicture/<%= user && user._id %>" class="card-img-top img-fluid mx-auto d-block mb-3 rounded-circle" alt="Profile Picture" style="width: 176px; height: 176px;">
-                </div>
-            </div>
-        </div>
+    <div class="text-center">
+        <h1 class="display-5 fw-bold text-body-emphasis"> Organization Profile </h1><br>
     </div>
     <div class="px-4 text-center">
+        <div class="col-md-6 offset-md-3 text-center">
+            <div class="position-relative d-inline-block">
+                <img src="/orgProfilePicture/<%= user && user._id %>" class="card-img-top img-fluid mx-auto d-block rounded-circle" alt="Profile Picture" style="width: 176px; height: 176px;">
+                <br>
+            </div>
+        </div>
         <form id="orgInfo" action="/orgInfo" method="post" enctype="multipart/form-data">
 
             <div class="row justify-content-center">

@@ -7,24 +7,24 @@
     <br>
     <form action='/submitUser' method='post' class="needs-validation" novalidate>
         <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
+            <label for="username" class="form-label">Username*</label>
             <input name='username' type='text' class="form-control" id="username" placeholder='Username' required>
             <div class="invalid-feedback">
                 Please enter a username.
             </div>
         </div>
         <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
+            <label for="email" class="form-label">Email*</label>
             <input name='email' type='email' class="form-control" id="email" placeholder='Email' required>
             <div class="invalid-feedback">
                 Please enter a valid email address.
             </div>
         </div>
         <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
+            <label for="password" class="form-label">Password*</label>
             <div class="password-wrapper">
                 <input name='password' type='password' class="form-control" id="password" placeholder='Password' required>
-               Show Password<span class="eye-icon" id="togglePassword">&#128065;</span>
+               Show Password        <span class="eye-icon" id="togglePassword">&#128065;</span>
             </div>
             <div class="invalid-feedback">
                 Please enter a password.
