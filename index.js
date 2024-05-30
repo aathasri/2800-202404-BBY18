@@ -660,9 +660,11 @@ app.get('/droneList', async (req, res) => {
 });
 
 
-app.get('/addDrone',  sessionValidation, orgAuthorization, (req, res) => {
-    res.render('addDrone');
+app.get('/addDrone',  sessionValidation, orgAuthorization, async (req, res) => {
+    const locations = await locationCollection.find({}).toArray();
+    res.render('addDrone', { locations });
 });
+
 app.post('/addingDrone', async (req, res) => {
     var name = req.body.name;
     var status = req.body.status;
