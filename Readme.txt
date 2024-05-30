@@ -41,6 +41,7 @@ Used chatgpt: chat.openai.com
 - Generated the enable form function to control the profile form with the edit button. 
 
 Hugo Amuan:
+
 1. File: index.js
 Used ChatGPT: chat.openai.com
 - npm multer used to handle file uploads for profile picture. 
@@ -60,7 +61,6 @@ Used ChatGPT: chat.openai.com
 4. orgProfile.ejs
 Used ChatGPT: chat.openai.com
 - Helped with retrieval of images for profile picture from mongoDB.
-
 
 Mitchell MacDonald:
 
@@ -84,6 +84,9 @@ Used ChatGPT: chat.openai.com
 
 Aathavan Sriharan
 
+1. File: UserDroneTracking
+Used ChatGPT: chat.openai.com
+- Used to help connect the google maps api and display the current location
 
 Other: 
 
