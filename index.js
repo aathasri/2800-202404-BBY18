@@ -275,27 +275,33 @@ app.get('/orgProfilePicture/:userId', async (req, res) => {
   
   // Used ChatGpt to help accept form submission and editing. Chatgpt: chat.openai.com
   app.post('/callForHelp', async (req, res) => {
-      try {
-  
-          // Used gpt to figure out how to create a timestamp.
-          const timeStamp = new Date();
-          const formattedTimestamp = timeStamp.toLocaleString();
-  
-          // Gets the user's information
-          const userId = req.session.userId;
-          const user = await userCollection.findOne({ _id: new ObjectId(userId)});
-  
-          //Take relevant information from user and provide to org.
-          await emergencyCollection.insertOne({userId: req.session.userId, username: user.username, location: "" , time: formattedTimestamp, status: "requested"  })
-  
-  
-          // Redirect the org back to the profile page
-          res.redirect('/userDroneTracking');
-      } catch (error) {
-          console.error('Error:', error);
-          res.status(500).send('Internal Server Error');
-      }
-  });
+    try {
+        // Get the timestamp
+        const timeStamp = new Date();
+        const formattedTimestamp = timeStamp.toLocaleString();
+
+        // Get the user's information
+        const userId = req.session.userId;
+        const user = await userCollection.findOne({ _id: new ObjectId(userId) });
+
+        // Take relevant information from user and provide to org.
+        await emergencyCollection.insertOne({
+            userId: req.session.userId,
+            username: user.username,
+            latitude: req.body.latitude, 
+            longitude: req.body.longitude,
+            time: formattedTimestamp,
+            status: "requested"
+        });
+
+        // Redirect the user back to the profile page
+        res.redirect('/userDroneTracking');
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 
 app.get('/login', (req, res) => {
     var errorMessage = req.session.errorMessage || '';

@@ -73,6 +73,9 @@
             <div class="col-lg-6 mx-auto">
                 <div class="d-grid gap-2 d-md-flex justify-content-sm-center">
                     <form id="callForHelpForm" action="/callForHelp" method="post">
+                        <input type="hidden" id="latitude" name="latitude" value="">
+<input type="hidden" id="longitude" name="longitude" value="">
+
                         <button type="button" class="btn btn-danger btn-lg rounded-pill btnXL" data-bs-toggle="modal"
                             data-bs-target="#callForHelpModal">Call For Help</button>
                     </form>
@@ -83,22 +86,22 @@
 
     <!-- Call for Help Modal -->
     <div class="modal fade" id="callForHelpModal" tabindex="-1" role="dialog" aria-labelledby="emergencyModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title" id="emergencyModalLabel">Emergency</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h1>Are you sure you would like to call 911 for help?</h1>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" id="confirmCallForHelp" class="btn btn-danger">Call For Help</button>
-                </div>
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="emergencyModalLabel">Emergency</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h1>Are you sure you would like to call 911 for help?</h1>
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button id="getLocationAndCallForHelpBtn" class="btn btn-danger">Call For Help</button>
             </div>
         </div>
     </div>
+</div>
 
     <!-- Checkmark Animation Modal -->
     <div class="modal fade" id="checkmarkAnimationModal" tabindex="-1" role="dialog"
@@ -120,23 +123,29 @@
 
     <!-- Event listeners created by ChatGPT (chat.openai.com) -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('confirmCallForHelp').addEventListener('click', function () {
-                // Close the emergency modal
-                var callForHelpModal = new bootstrap.Modal(document.getElementById('callForHelpModal'));
-                callForHelpModal.hide();
+document.addEventListener('DOMContentLoaded', function () {
+        // Function to get user's current location and call for help
+        function getLocationAndCallForHelp() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
 
-                // Show the checkmark animation modal
-                var checkmarkAnimationModal = new bootstrap.Modal(document.getElementById('checkmarkAnimationModal'));
-                checkmarkAnimationModal.show();
+                    // Update hidden form fields with latitude and longitude values
+                    document.getElementById('latitude').value = latitude;
+                    document.getElementById('longitude').value = longitude;
 
-                // Listen for the end of the CSS animation
-                var checkmark = document.querySelector('.checkmark');
-                checkmark.addEventListener('animationend', function () {
+                    // Proceed with calling for help
                     document.getElementById('callForHelpForm').submit();
-                }, { once: true });
-            });
-        });
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        // Add event listener to the "Get My Location & Call For Help" button
+        document.getElementById('getLocationAndCallForHelpBtn').addEventListener('click', getLocationAndCallForHelp);
+    });
     </script>
 
     <%- include("templates/footerAuthenticatedUser") %>
