@@ -64,7 +64,7 @@ Used ChatGPT: chat.openai.com
 
 Mitchell MacDonald:
 
-Gurshaan Daula
+Gurshaan Daula: 
 1. File: index.js
 Used ChatGPT: chat.openai.com
 - Used to help with retrieving data from mongoDB
@@ -78,6 +78,9 @@ Used ChatGPT: chat.openai.com
 Used ChatGPT: chat.openai.com
 - Used to help with creating a responsive header and footer using bootstrap
 
+4. userDash.ejs
+Used ChatGPT: chat.openai.com
+- Used to display animations
 
 Aathavan Sriharan
 

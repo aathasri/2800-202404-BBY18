@@ -709,7 +709,7 @@ app.post('/addingDrone', async (req, res) => {
     // req.session.userId = result.insertedId;
     req.session.cookiemaxAge = expireTime;
 
-    res.redirect("/addDrone");
+    res.redirect("/droneList");
 })
 
 
@@ -734,7 +734,7 @@ app.post('/addingLocation', async (req, res) => {
     const validationResult = schema.validate({ name, location, description });
     if (validationResult.error != null) {
         console.log(validationResult.error);
-        res.redirect("/addDrone");
+        res.redirect("/addLocation");
         return;
     }
 
@@ -748,13 +748,8 @@ app.post('/addingLocation', async (req, res) => {
     // req.session.userId = result.insertedId;
     req.session.cookiemaxAge = expireTime;
 
-    res.redirect("/addLocation");
+    res.redirect("/locationList");
 })
-
-// REMOVE AT END
-app.get('/test', (req, res) => {
-    res.render('test');
-});
 
 app.get('/orgDashboard', sessionValidation, orgAuthorization, async (req, res) => {
     try {

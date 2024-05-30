@@ -144,14 +144,26 @@
 <div id="mainContent">
   <div class="card mapCard">
     <div class="card-body mapCardTitle">
-      <h5 class="card-title">Drones Near You</h5>
+      <h1 class="card-title" style="text-align: center;">Drones Near You</h1>
     </div>
     <div id="map" class="rounded"></div>
   </div>
-  <div class="d-grid gap-2 px-3">
-    <a href="/locationList" class="btn btn-primary btn-lg" type="button">Location List</a>
-    <a href="/droneList" class="btn btn-secondary btn-lg" type="button">Drone List</a>
-  </div>
 </div>
-
+<script>
+    // Get the message query parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const message = urlParams.get('message');
+    if (message) {
+      // Delay the alert by 10 seconds (10000 milliseconds)
+      setTimeout(() => {
+        Swal.fire({
+      title: 'Help is coming',
+      text: 'A drone has been dispatched to your location.',
+      icon: 'success',
+      timer: 5000
+    });      }, 10000);
+    }
+  </script>
 <%- include('templates/footerAuthenticatedUser') %>
+
+
