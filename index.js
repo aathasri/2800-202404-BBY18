@@ -236,7 +236,7 @@ app.get('/orgProfilePicture/:userId', async (req, res) => {
             res.contentType('image/jpeg');
             res.send(user.profilePictureData.buffer);
         } else {
-            res.sendFile(path.join(__dirname, 'images', 'gojo.png'));
+            res.sendFile(path.join(__dirname, 'images', 'placeholder_pp.jpg'));
         }       
     } catch (error) {
         console.error('Error:', error);
@@ -331,7 +331,7 @@ app.post('/forgotPassword', async (req, res) => {
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to: email,
-        subject: 'Password Reset',
+        subject: 'Mr Listr: Password Reset' ,
         text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n`
             + `Please click on the following link, or paste this into your browser to complete the process:\n\n`
             + `http://${req.headers.host}/reset/${token}\n\n`
@@ -567,12 +567,9 @@ app.get('/userProfilePicture/:userId', async (req, res) => {
             res.contentType('image/jpeg'); // Adjust the content type based on the image format
 
             // Send the profile picture data as the response
-            res.send(user.profilePictureData.buffer); // Assuming profilePictureData is a Binary object
         } else {
             // If the user or profile picture data doesn't exist, send a default image or error message
-            res.sendFile(path.join(__dirname, 'images', 'default-profile-picture.png')); // Send default image
-            // Alternatively, you can send an error message
-            // res.status(404).send('Profile picture not found');
+            res.sendFile(path.join(__dirname, 'images', 'placeholder_pp.jpg'));
         }
     } catch (error) {
         console.error('Error:', error);
