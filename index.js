@@ -334,8 +334,8 @@ app.post('/forgotPassword', async (req, res) => {
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to: email,
-        subject: 'Mr Listr: Password Reset' ,
-        text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n`
+        subject: 'Asclepius: Password Reset' ,
+        text: `Dear ${req.session.username}, \n\n You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n`
             + `Please click on the following link, or paste this into your browser to complete the process:\n\n`
             + `http://${req.headers.host}/reset/${token}\n\n`
             + `If you did not request this, please ignore this email and your password will remain unchanged.\n`
@@ -673,44 +673,38 @@ app.get('/droneList', async (req, res) => {
 });
 
 
-app.get('/addDrone',  sessionValidation, orgAuthorization, async (req, res) => {
+app.get('/addDrone', sessionValidation, orgAuthorization, async (req, res) => {
     const locations = await locationCollection.find({}).toArray();
-    res.render('addDrone', { locations });
+    res.render('addDrone', { locations, errorMessage: req.query.errorMessage || null });
 });
 
+
 app.post('/addingDrone', async (req, res) => {
-    var name = req.body.name;
-    var status = req.body.status;
-    var location = req.body.location;
-    var description = req.body.description;
+    const { name, location, inventory } = req.body;
 
-    const schema = Joi.object(
-        {
-            name: Joi.string().required(),
-            status: Joi.string().alphanum().max(20).required(),
-            location: Joi.string().max(20).required(),
-            description: Joi.string().required()
-        });
+    const schema = Joi.object({
+        name: Joi.string().required(),
+        inventory: Joi.string().required(),
+        location: Joi.string().max(20).required(),
+    });
 
-    const validationResult = schema.validate({ name, status, location, description });
-    if (validationResult.error != null) {
+    const validationResult = schema.validate({ name, location, inventory });
+    if (validationResult.error) {
         console.log(validationResult.error);
-        res.redirect("/addDrone");
+        const errorMessage = "Status must be 20 characters or less.";
+        res.redirect(`/addDrone?errorMessage=${encodeURIComponent(errorMessage)}`);
         return;
     }
 
-
-    var result = await droneCollection.insertOne({ name: name, status: status, location: location, description: description, user_type: "drone" });
+    const result = await droneCollection.insertOne({ name, status: "inactive", location,  inventory, user_type: "drone" });
     console.log("Inserted drone");
 
-    // req.session.authenticated = true;
     req.session.name = result.name;
-    //Tanner created req.session.userId = result.insertedId; with chatgpt: chat.openai.com
-    // req.session.userId = result.insertedId;
     req.session.cookiemaxAge = expireTime;
 
     res.redirect("/droneList");
-})
+});
+
 
 
 app.get('/addLocation',sessionValidation, orgAuthorization, (req, res) => {

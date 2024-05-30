@@ -8,6 +8,9 @@
     <br>
     <br>
     <h1 class="mb-4">Add Drone</h1>
+      <% if (errorMessage) { %>
+        <div style="color: red;"><%= errorMessage %></div>
+    <% } %>
     <form action='/addingDrone' method='post' class="needs-validation" novalidate>
         <div class="mb-3">
             <label for="name" class="form-label">Name</label>
@@ -17,10 +20,10 @@
             </div>
         </div>
         <div class="mb-3">
-            <label for="status" class="form-label">Status</label>
-            <input name='status' type='text' class="form-control" id="status" placeholder='Drone Status' required>
+            <label for="inventory" class="form-label">Inventory</label>
+            <input name='inventory' type='text' class="form-control" id="inventory" placeholder='Drone Inventory' required>
             <div class="invalid-feedback">
-                Drone Status:
+                Drone Inventory:
             </div>
         </div>
         <div class="mb-3">
@@ -37,15 +40,6 @@
                         <option value="<%= location.name %>"> <%= location.name %> </option>
                     <% }); %>
                 </select>
-
-        </div>
-        <div class="mb-3">
-            <label for="location" class="form-label">Description</label>
-            <input name='description' type='text' class="form-control" id="description"  rows="3" placeholder='Drone Description' required>
-            <!-- <textarea name="description" type="text" class="form-control" id="description" rows="3" disabled>Description</textarea> -->
-            <div class="invalid-feedback">
-                Drone Description:
-            </div>
         </div>
         <button type='submit' class="btn btn-primary">Submit</button>
     </form>
