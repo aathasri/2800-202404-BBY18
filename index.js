@@ -26,6 +26,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+
+
+
 app.post('/uploadProfilePicture', upload.single('profilePicture'), async (req, res) => {
     try {
         if (!req.file) {
@@ -288,14 +291,15 @@ app.get('/orgProfilePicture/:userId', async (req, res) => {
           //Take relevant information from user and provide to org.
           await emergencyCollection.insertOne({userId: req.session.userId, username: user.username, location: "" , time: formattedTimestamp, status: "requested"  })
   
-  
           // Redirect the org back to the profile page
-          res.redirect('/userDroneTracking');
-      } catch (error) {
+          res.redirect('/userDroneTracking?message=A drone has been dispatched to your location!');      } catch (error) {
           console.error('Error:', error);
           res.status(500).send('Internal Server Error');
       }
   });
+  
+
+  
 
 app.get('/login', (req, res) => {
     var errorMessage = req.session.errorMessage || '';

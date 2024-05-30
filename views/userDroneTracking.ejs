@@ -138,5 +138,17 @@
       <a href="/droneList" class="btn btn-secondary btn-lg" type="button">Drone List</a>
     </div>
   </div>
+  <script>
+    // Get the message query parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const message = urlParams.get('message');
+
+    if (message) {
+      // Delay the alert by 10 seconds (10000 milliseconds)
+      setTimeout(() => {
+        alert(message);
+      }, 15000);
+    }
+  </script>
 
   <%- include('templates/footerAuthenticatedUser') %>
