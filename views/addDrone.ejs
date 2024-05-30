@@ -24,11 +24,20 @@
             </div>
         </div>
         <div class="mb-3">
-            <label for="location" class="form-label">Location</label>
+            <!-- <label for="location" class="form-label">Location</label>
             <input name='location' type='text' class="form-control" id="location" placeholder='Drone Location' required>
             <div class="invalid-feedback">
                 Drone Location:
-            </div>
+            </div> -->
+
+            <label for="location" class="form-label">Location</label>
+                <select name="location" class="form-select form-select-md col-mb-3" id="location" required>
+                    <option value="">Select a location</option>
+                    <% locations.forEach((location) => { %>
+                        <option value="<%= location.name %>"> <%= location.name %> </option>
+                    <% }); %>
+                </select>
+
         </div>
         <div class="mb-3">
             <label for="location" class="form-label">Description</label>
